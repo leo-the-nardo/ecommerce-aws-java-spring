@@ -3,6 +3,8 @@ package com.leothenardo.ecommerce.models;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -21,6 +23,8 @@ public class Order {
 	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
 	private Payment payment;
 
+	@OneToMany(mappedBy = "id.order")
+	private Set<OrderItem> items = new HashSet<>();
 
 	public Order(String id, Instant moment, OrderStatus status, User client, Payment payment) {
 		this.id = id;
