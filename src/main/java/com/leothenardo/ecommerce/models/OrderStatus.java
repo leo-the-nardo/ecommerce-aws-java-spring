@@ -1,4 +1,4 @@
-package com.leothenardo.ecommerce.entities;
+package com.leothenardo.ecommerce.models;
 
 public enum OrderStatus {
 	WAITING_PAYMENT,
