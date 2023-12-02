@@ -3,6 +3,7 @@ package com.leothenardo.ecommerce.models;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -10,7 +11,8 @@ import java.util.Set;
 public class Product {
 
 	@Id
-	private String id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 	private String name;
 	@Column(columnDefinition = "TEXT")
 	private String description;
@@ -27,7 +29,7 @@ public class Product {
 	private Set<OrderItem> orderItems = new HashSet<>();
 
 
-	public Product(String id, String name, String description, Double price, String imgUrl, Set<Category> categories) {
+	public Product(Long id, String name, String description, Double price, String imgUrl, Set<Category> categories) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
@@ -48,11 +50,11 @@ public class Product {
 		this.categories = categories;
 	}
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -86,5 +88,18 @@ public class Product {
 
 	public void setImgUrl(String imgUrl) {
 		this.imgUrl = imgUrl;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Product product = (Product) o;
+		return Objects.equals(id, product.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }

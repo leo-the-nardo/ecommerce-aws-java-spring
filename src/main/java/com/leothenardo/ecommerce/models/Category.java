@@ -1,11 +1,9 @@
 package com.leothenardo.ecommerce.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -13,7 +11,8 @@ import java.util.Set;
 public class Category {
 
 	@Id
-	private String id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 	private String name;
 
 	@ManyToMany(mappedBy = "categories")
@@ -23,17 +22,18 @@ public class Category {
 	public Category() {
 	}
 
-	public Category(String id, String name, Set<Product> products) {
+	public Category(Long id, String name, Set<Product> products) {
 		this.id = id;
 		this.name = name;
 		this.products = products;
 	}
 
-	public String getId() {
+
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -52,4 +52,18 @@ public class Category {
 	public void setProducts(Set<Product> products) {
 		this.products = products;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Category category = (Category) o;
+		return Objects.equals(id, category.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
 }
