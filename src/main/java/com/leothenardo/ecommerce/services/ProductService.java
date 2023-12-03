@@ -31,4 +31,15 @@ public class ProductService {
 		Page<Product> resultDb = productRepository.findAll(pageable);
 		return resultDb.map(ProductDTO::from);
 	}
+
+	public ProductDTO insert(ProductDTO productDTO) {
+		Product product = new Product(
+						null,
+						productDTO.name(),
+						productDTO.description(),
+						productDTO.price(),
+						productDTO.imgUrl());
+		Product persistedProduct = productRepository.save(product);
+		return ProductDTO.from(persistedProduct);
+	}
 }

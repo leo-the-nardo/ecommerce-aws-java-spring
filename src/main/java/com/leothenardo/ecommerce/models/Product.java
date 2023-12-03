@@ -29,13 +29,13 @@ public class Product {
 	private Set<OrderItem> orderItems = new HashSet<>();
 
 
-	public Product(Long id, String name, String description, Double price, String imgUrl, Set<Category> categories) {
+	public Product(Long id, String name, String description, Double price, String imgUrl) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.price = price;
 		this.imgUrl = imgUrl;
-		this.categories = categories;
+//		this.categories = categories;
 	}
 
 	public Product() {
