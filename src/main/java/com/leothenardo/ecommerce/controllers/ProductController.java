@@ -1,7 +1,9 @@
 package com.leothenardo.ecommerce.controllers;
 
+import com.leothenardo.ecommerce.dtos.CustomError;
 import com.leothenardo.ecommerce.dtos.ProductDTO;
 import com.leothenardo.ecommerce.services.ProductService;
+import com.leothenardo.ecommerce.services.exceptions.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.Instant;
 
 
 @RestController

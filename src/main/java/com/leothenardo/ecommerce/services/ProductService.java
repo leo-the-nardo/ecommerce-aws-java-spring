@@ -3,6 +3,7 @@ package com.leothenardo.ecommerce.services;
 import com.leothenardo.ecommerce.dtos.ProductDTO;
 import com.leothenardo.ecommerce.models.Product;
 import com.leothenardo.ecommerce.repositories.ProductRepository;
+import com.leothenardo.ecommerce.services.exceptions.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,9 @@ public class ProductService {
 
 	@Transactional(readOnly = true)
 	public ProductDTO findById(Long id) {
-		Optional<Product> result = productRepository.findById(id);
-		Product productDb = result.get();
+		Product productDb = productRepository
+						.findById(id)
+						.orElseThrow(() -> new ResourceNotFoundException(id));
 		return ProductDTO.from(productDb);
 	}
 
@@ -45,14 +47,16 @@ public class ProductService {
 
 	@Transactional
 	public ProductDTO update(Long id, ProductDTO productDTO) {
-		Optional<Product> previousProduct = productRepository.findById(id);
-		Product previousProductDb = previousProduct.get();
+		Product previousProduct = productRepository
+						.findById(id)
+						.orElseThrow(() -> new ResourceNotFoundException(id));
+
 		Product product = new Product(
 						id,
-						productDTO.name() != null ? productDTO.name() : previousProductDb.getName(),
-						productDTO.description() != null ? productDTO.description() : previousProductDb.getDescription(),
-						productDTO.price() != null ? productDTO.price() : previousProductDb.getPrice(),
-						productDTO.imgUrl() != null ? productDTO.imgUrl() : previousProductDb.getImgUrl());
+						productDTO.name() != null ? productDTO.name() : previousProduct.getName(),
+						productDTO.description() != null ? productDTO.description() : previousProduct.getDescription(),
+						productDTO.price() != null ? productDTO.price() : previousProduct.getPrice(),
+						productDTO.imgUrl() != null ? productDTO.imgUrl() : previousProduct.getImgUrl());
 		Product persistedProduct = productRepository.save(product);
 		return ProductDTO.from(persistedProduct);
 	}
