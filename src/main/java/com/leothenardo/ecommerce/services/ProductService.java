@@ -31,6 +31,7 @@ public class ProductService {
 		return resultDb.map(ProductDTO::from);
 	}
 
+	@Transactional
 	public ProductDTO insert(ProductDTO productDTO) {
 		Product product = new Product(
 						null,
@@ -42,6 +43,7 @@ public class ProductService {
 		return ProductDTO.from(persistedProduct);
 	}
 
+	@Transactional
 	public ProductDTO update(Long id, ProductDTO productDTO) {
 		Optional<Product> previousProduct = productRepository.findById(id);
 		Product previousProductDb = previousProduct.get();
@@ -53,5 +55,10 @@ public class ProductService {
 						productDTO.imgUrl() != null ? productDTO.imgUrl() : previousProductDb.getImgUrl());
 		Product persistedProduct = productRepository.save(product);
 		return ProductDTO.from(persistedProduct);
+	}
+
+	@Transactional
+	public void delete(Long id) {
+		productRepository.deleteById(id);
 	}
 }
