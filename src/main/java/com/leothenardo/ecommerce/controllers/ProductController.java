@@ -4,6 +4,7 @@ import com.leothenardo.ecommerce.dtos.CustomError;
 import com.leothenardo.ecommerce.dtos.ProductDTO;
 import com.leothenardo.ecommerce.services.ProductService;
 import com.leothenardo.ecommerce.services.exceptions.ResourceNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class ProductController {
 	}
 
 	@PostMapping(value = "/")
-	public ResponseEntity<ProductDTO> create(@RequestBody ProductDTO productDTO) {
+	public ResponseEntity<ProductDTO> create(@Valid @RequestBody ProductDTO productDTO) {
 		ProductDTO dto = productService.insert(productDTO);
 		URI uri = ServletUriComponentsBuilder
 						.fromCurrentRequestUri()
@@ -48,7 +49,10 @@ public class ProductController {
 	}
 
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
+	public ResponseEntity<ProductDTO> update(
+					@Valid @PathVariable Long id,
+					@RequestBody ProductDTO productDTO) {
+		
 		ProductDTO dto = productService.update(id, productDTO);
 		return ResponseEntity.ok().body(dto);
 	}
