@@ -1,4 +1,4 @@
-package com.leothenardo.ecommerce.interceptors;
+package com.leothenardo.ecommerce.controllers.interceptors;
 
 import com.leothenardo.ecommerce.dtos.CustomError;
 import com.leothenardo.ecommerce.dtos.ValidationError;

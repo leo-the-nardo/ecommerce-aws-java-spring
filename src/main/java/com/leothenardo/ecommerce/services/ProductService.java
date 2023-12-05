@@ -9,8 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 public class ProductService {
 	private final ProductRepository productRepository;
@@ -28,8 +26,8 @@ public class ProductService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<ProductDTO> findAll(Pageable pageable) {
-		Page<Product> resultDb = productRepository.findAll(pageable);
+	public Page<ProductDTO> search(String name, Pageable pageable) {
+		Page<Product> resultDb = productRepository.searchByName(name, pageable);
 		return resultDb.map(ProductDTO::from);
 	}
 
