@@ -33,6 +33,7 @@ public class User implements UserDetails {
 	public User() {
 	}
 
+
 	public User(Long id, String name, String email, String phone, LocalDate birthDate, String password, List<Order> orders) {
 		this.id = id;
 		this.name = name;
