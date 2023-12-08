@@ -1,13 +1,18 @@
 package com.leothenardo.ecommerce.services;
 
+import com.leothenardo.ecommerce.dtos.UserDTO;
 import com.leothenardo.ecommerce.models.Role;
 import com.leothenardo.ecommerce.models.User;
 import com.leothenardo.ecommerce.projections.UserDetailsProjection;
 import com.leothenardo.ecommerce.repositories.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -35,5 +40,20 @@ public class UserService implements UserDetailsService {
 						new Role(userRow.getRoleId(), userRow.getAuthority())
 		));
 		return userJpaEntity;
+	}
+
+	protected User authenticated() {
+		System.out.println("authenticated");
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Jwt jwtPrincipal = (Jwt) authentication.getPrincipal();
+		String emailJwt = jwtPrincipal.getClaim("username");
+		System.out.println("end authenticated");
+		return userRepository.findByEmail(emailJwt).orElseThrow(() -> new UsernameNotFoundException("Email not found"));
+	}
+
+	@Transactional(readOnly = true) // readOnly = true -> Don't need to lock the database
+	public UserDTO getMe() {
+		User user = authenticated();
+		return UserDTO.from(user);
 	}
 }

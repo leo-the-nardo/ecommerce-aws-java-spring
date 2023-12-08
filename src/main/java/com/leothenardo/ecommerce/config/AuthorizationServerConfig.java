@@ -57,6 +57,7 @@ public class AuthorizationServerConfig {
 	@Value("${security.jwt.duration}")
 	private Integer jwtDurationSeconds;
 
+	//modified
 	public AuthorizationServerConfig(UserDetailsService userDetailsService) {
 		this.userDetailsService = userDetailsService;
 	}
