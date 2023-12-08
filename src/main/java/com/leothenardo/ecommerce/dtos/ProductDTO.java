@@ -3,6 +3,9 @@ package com.leothenardo.ecommerce.dtos;
 import com.leothenardo.ecommerce.models.Product;
 import jakarta.validation.constraints.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public record ProductDTO(
 				Long id,
 
@@ -18,7 +21,12 @@ public record ProductDTO(
 				String description,
 
 				@NotBlank(message = "ImgUrl is required")
-				String imgUrl) {
+				String imgUrl,
+
+				@NotEmpty(message = "At least one category is required")
+				List<CategoryDTO> categories
+) {
+
 
 	public static ProductDTO from(Product product) {
 		return new ProductDTO(
@@ -26,6 +34,10 @@ public record ProductDTO(
 						product.getName(),
 						product.getPrice(),
 						product.getDescription(),
-						product.getImgUrl());
+						product.getImgUrl(),
+						product.getCategories().isEmpty() ?
+										new ArrayList<>()
+										: product.getCategories().stream().map(CategoryDTO::from).toList()
+		);
 	}
 }
