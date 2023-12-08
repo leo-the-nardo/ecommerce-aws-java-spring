@@ -53,6 +53,10 @@ public class Order {
 		this.moment = moment;
 	}
 
+	public Set<OrderItem> getItems() {
+		return items;
+	}
+
 	public OrderStatus getStatus() {
 		return status;
 	}

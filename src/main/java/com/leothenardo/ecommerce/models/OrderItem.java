@@ -23,6 +23,18 @@ public class OrderItem {
 		this.price = price;
 	}
 
+	public OrderItemID getId() {
+		return id;
+	}
+
+	public Integer getQuantity() {
+		return quantity;
+	}
+
+	public Double getPrice() {
+		return price;
+	}
+
 	public Order getOrder() {
 		return id.getOrder();
 	}
