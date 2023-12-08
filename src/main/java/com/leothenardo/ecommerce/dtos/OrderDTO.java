@@ -3,6 +3,7 @@ package com.leothenardo.ecommerce.dtos;
 import com.leothenardo.ecommerce.models.Order;
 import com.leothenardo.ecommerce.models.OrderItem;
 import com.leothenardo.ecommerce.models.OrderStatus;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.time.Instant;
 import java.util.List;
@@ -13,6 +14,8 @@ public record OrderDTO(
 				OrderStatus orderStatus,
 				ClientMinDTO client,
 				PaymentDTO payment,
+
+				@NotEmpty(message = "should have at least one item")
 				List<OrderItemDTO> items,
 				Double total
 ) {
