@@ -18,22 +18,25 @@ public class OrderService {
 	private final OrderItemRepository orderItemRepository;
 	private final ProductRepository productRepository;
 	private final UserService userService;
+	private final AuthService authService;
 
-	public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ProductRepository productRepository, UserService userService) {
+	public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ProductRepository productRepository, UserService userService, AuthService authService) {
 		this.orderRepository = orderRepository;
 		this.orderItemRepository = orderItemRepository;
 		this.productRepository = productRepository;
 		this.userService = userService;
+		this.authService = authService;
 	}
 
 	@Transactional(readOnly = true)
 	public OrderDTO findById(Long id) {
+		authService.validateSelfOrAdmin(id); // If it's not admin or the user itself, it will throw an exception
 		Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
 		return OrderDTO.from(order);
 	}
 
 	@Transactional
-	public OrderDTO insert(OrderDTO orderDTO) {
+	public OrderDTO create(OrderDTO orderDTO) {
 		Order order = new Order();
 		order.setMoment(Instant.now());
 		order.setStatus(OrderStatus.WAITING_PAYMENT);

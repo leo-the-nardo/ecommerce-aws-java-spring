@@ -2,6 +2,7 @@ package com.leothenardo.ecommerce.controllers.interceptors;
 
 import com.leothenardo.ecommerce.dtos.CustomError;
 import com.leothenardo.ecommerce.dtos.ValidationError;
+import com.leothenardo.ecommerce.services.exceptions.ForbiddenException;
 import com.leothenardo.ecommerce.services.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,18 @@ public class ControllerExceptionHandler {
 						status.value(),
 						"Validation exception",
 						e.getFieldErrors(),
+						request.getRequestURI()
+		);
+		return ResponseEntity.status(status).body(error);
+	}
+
+	@ExceptionHandler(ForbiddenException.class)
+	public ResponseEntity<CustomError> forbidden(ForbiddenException e, HttpServletRequest request) {
+		var status = HttpStatus.FORBIDDEN;
+		CustomError error = new CustomError(
+						Instant.now(),
+						status.value(),
+						e.getMessage(),
 						request.getRequestURI()
 		);
 		return ResponseEntity.status(status).body(error);
