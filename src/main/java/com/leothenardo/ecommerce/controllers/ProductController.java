@@ -1,6 +1,7 @@
 package com.leothenardo.ecommerce.controllers;
 
 import com.leothenardo.ecommerce.dtos.ProductDTO;
+import com.leothenardo.ecommerce.dtos.ProductMinDTO;
 import com.leothenardo.ecommerce.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -29,11 +30,11 @@ public class ProductController {
 	}
 
 	@GetMapping(value = "/")
-	public ResponseEntity<Page<ProductDTO>> fetch(
+	public ResponseEntity<Page<ProductMinDTO>> fetch(
 					@RequestParam(name = "name", defaultValue = "") String name,
 					Pageable pageable) {
 
-		Page<ProductDTO> paginatedDto = productService.search(name, pageable);
+		Page<ProductMinDTO> paginatedDto = productService.search(name, pageable);
 		return ResponseEntity.ok().body(paginatedDto);
 	}
 

@@ -1,6 +1,7 @@
 package com.leothenardo.ecommerce.services;
 
 import com.leothenardo.ecommerce.dtos.ProductDTO;
+import com.leothenardo.ecommerce.dtos.ProductMinDTO;
 import com.leothenardo.ecommerce.models.Product;
 import com.leothenardo.ecommerce.repositories.ProductRepository;
 import com.leothenardo.ecommerce.services.exceptions.ResourceNotFoundException;
@@ -26,9 +27,9 @@ public class ProductService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<ProductDTO> search(String name, Pageable pageable) {
+	public Page<ProductMinDTO> search(String name, Pageable pageable) {
 		Page<Product> resultDb = productRepository.searchByName(name, pageable);
-		return resultDb.map(ProductDTO::from);
+		return resultDb.map(ProductMinDTO::from);
 	}
 
 	@Transactional
