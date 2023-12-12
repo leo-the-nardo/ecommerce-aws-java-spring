@@ -27,7 +27,12 @@ public class FileReference {
 	@Enumerated(EnumType.STRING)
 	private Type type;
 
-	public FileReference(String id, OffsetDateTime createdAt, String name, String contentType, Long contentLength, boolean temp, Type type) {
+	public FileReference(String id, OffsetDateTime createdAt,
+											 String name,
+											 String contentType,
+											 Long contentLength,
+											 boolean temp,
+											 Type type) {
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(contentType);
 		Objects.requireNonNull(contentLength);
@@ -72,7 +77,7 @@ public class FileReference {
 
 	public void setTemp(boolean temp) {
 		this.temp = temp;
-	} // ebook service turn this false on create
+	} //false on creation of the entity that this file reference is attached to
 
 	public Type getType() {
 		return type;
@@ -88,7 +93,7 @@ public class FileReference {
 
 	/// INTERNAL CLASSIFICATION, IS NOT CONTENT-TYPE
 	public enum Type {
-		DOCUMENT(false),
+		THUMB(true),
 		IMAGE(true);
 
 		private final boolean publicAccessible;

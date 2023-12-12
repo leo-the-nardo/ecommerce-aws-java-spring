@@ -18,7 +18,7 @@ public record OrderItemDTO(Long productId,
 						entity.getQuantity(),
 						entity.getPrice(),
 						subTotal,
-						entity.getProduct().getImgUrl()
+						null
 		);
 	}
 

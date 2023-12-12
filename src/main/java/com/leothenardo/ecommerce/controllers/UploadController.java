@@ -3,6 +3,7 @@ package com.leothenardo.ecommerce.controllers;
 
 import com.leothenardo.ecommerce.dtos.UploadImageRequestDTO;
 import com.leothenardo.ecommerce.dtos.UploadRequestResultDTO;
+import com.leothenardo.ecommerce.dtos.UploadThumbRequestDTO;
 import com.leothenardo.ecommerce.services.StorageService;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,9 +23,17 @@ public class UploadController {
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-	@PostMapping("/images")
+	@PostMapping("/products/images")
 	public UploadRequestResultDTO newImageUploadRequest(
 					@RequestBody @Valid UploadImageRequestDTO request
+	) {
+		return storageService.generateUploadUrl(request.toDomain());
+	}
+
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	@PostMapping("/products/thumb")
+	public UploadRequestResultDTO newThumbUploadRequest(
+					@RequestBody @Valid UploadThumbRequestDTO request
 	) {
 		return storageService.generateUploadUrl(request.toDomain());
 	}

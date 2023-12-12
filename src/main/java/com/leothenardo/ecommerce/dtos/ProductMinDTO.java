@@ -14,6 +14,6 @@ public record ProductMinDTO(
 						product.getId(),
 						product.getName(),
 						product.getPrice(),
-						product.getImgUrl());
+						null);
 	}
 }

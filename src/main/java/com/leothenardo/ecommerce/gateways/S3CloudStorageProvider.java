@@ -51,6 +51,27 @@ public class S3CloudStorageProvider implements CloudStorageProvider {
 		return s3Presigner.presignPutObject(presignRequest).url();
 	}
 
+	@Override
+	public boolean fileExists(String filePath) {
+		if (filePath == null || filePath.isBlank()) {
+			return false;
+		}
+		HeadObjectRequest request = HeadObjectRequest.builder()
+						.bucket(getBucket())
+						.key(filePath)
+						.build();
+		try {
+			s3Client.headObject(request);
+			return true;
+
+		} catch (S3Exception e) {
+			if (e.statusCode() == 404) {
+				return false;
+			}
+			throw e;
+		}
+	}
+
 
 	private String getBucket() {
 		return storageProperties.getS3().getBucketName();

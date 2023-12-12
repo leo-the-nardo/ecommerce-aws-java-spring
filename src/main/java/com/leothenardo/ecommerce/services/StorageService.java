@@ -33,4 +33,9 @@ public class StorageService {
 		return new UploadRequestResultDTO(fileReference.getId(), presignedUploadUrl.toString());
 	}
 
+	public boolean fileExists(FileReference fileReference) {
+		Objects.requireNonNull(fileReference);
+		return cloudStorageProvider.fileExists(fileReference.getPath());
+	}
+
 }

@@ -2,9 +2,8 @@ package com.leothenardo.ecommerce.models;
 
 import jakarta.persistence.*;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "tb_product")
@@ -17,7 +16,13 @@ public class Product {
 	@Column(columnDefinition = "TEXT")
 	private String description;
 	private Double price;
-	private String imgUrl;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	private FileReference thumb;
+
+	// relation
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<FileReference> images;
 
 	@ManyToMany
 	@JoinTable(name = "tb_product_category",
@@ -29,15 +34,51 @@ public class Product {
 	private Set<OrderItem> orderItems = new HashSet<>();
 
 
-	public Product(Long id, String name, String description, Double price, String imgUrl, Set<Category> categories) {
+//	public Product(Long id, String name, String description, Double price, List<FileReference> images, Set<Category> categories) {
+//		this.id = id;
+//		this.name = name;
+//		this.description = description;
+//		this.price = price;
+//		this.imgUrl = imgUrl;
+//		this.categories = categories;
+//	}
+
+	public Product(Long id,
+								 String name,
+								 String description,
+								 Double price,
+								 String thumbId,
+								 List<String> imagesId,
+								 Set<Long> categoriesId) {
+
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.price = price;
-		this.imgUrl = imgUrl;
-		this.categories = categories;
+		this.thumb = mapThumb(thumbId);
+		this.categories = mapCategories(categoriesId);
+		this.images = mapImages(imagesId);
+
 	}
-	
+
+	public Product(
+					String name,
+					String description,
+					Double price,
+					FileReference thumb,
+					List<FileReference> images,
+					Set<Category> categories) {
+
+		this.name = name;
+		this.description = description;
+		this.price = price;
+		this.thumb = thumb;
+		this.categories = categories;
+		this.images = images;
+
+	}
+
+
 	public Product() {
 	}
 
@@ -66,6 +107,10 @@ public class Product {
 		this.name = name;
 	}
 
+	public FileReference getThumb() {
+		return thumb;
+	}
+
 	public String getDescription() {
 		return description;
 	}
@@ -82,13 +127,46 @@ public class Product {
 		this.price = price;
 	}
 
-	public String getImgUrl() {
-		return imgUrl;
+	public List<FileReference> getImages() {
+		return images;
 	}
 
-	public void setImgUrl(String imgUrl) {
-		this.imgUrl = imgUrl;
+	private List<FileReference> mapImages(List<String> imagesId) {
+		if (imagesId == null || imagesId.isEmpty()) return new ArrayList<>();
+		return imagesId.stream().map(
+						imgId -> new FileReference(
+										imgId,
+										null,
+										null,
+										null,
+										null,
+										false,
+										null
+						)
+		).toList();
 	}
+
+	//mapCategories
+	private Set<Category> mapCategories(Set<Long> categoriesId) {
+		return categoriesId.stream().map(
+						categoryId -> new Category(categoryId, null, null)
+		).collect(Collectors.toSet());
+	}
+
+	//mapThumb
+	private FileReference mapThumb(String thumbId) {
+		if (thumbId == null) return null;
+		return new FileReference(
+						thumbId,
+						null,
+						null,
+						null,
+						null,
+						false,
+						null
+		);
+	}
+
 
 	@Override
 	public boolean equals(Object o) {

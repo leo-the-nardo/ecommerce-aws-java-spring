@@ -1,6 +1,7 @@
 package com.leothenardo.ecommerce.controllers;
 
-import com.leothenardo.ecommerce.dtos.ProductDTO;
+import com.leothenardo.ecommerce.dtos.CreateProductInputDTO;
+import com.leothenardo.ecommerce.dtos.IdGenericDTO;
 import com.leothenardo.ecommerce.dtos.ProductMinDTO;
 import com.leothenardo.ecommerce.services.ProductService;
 import jakarta.validation.Valid;
@@ -22,48 +23,50 @@ public class ProductController {
 	public ProductController(ProductService productService) {
 		this.productService = productService;
 	}
-
-	@GetMapping(value = "/{id}")
-	public ResponseEntity<ProductDTO> find(@PathVariable Long id) {
-		ProductDTO dto = productService.findById(id);
-		return ResponseEntity.ok().body(dto);
-	}
-
-	@GetMapping(value = "/")
-	public ResponseEntity<Page<ProductMinDTO>> fetch(
-					@RequestParam(name = "name", defaultValue = "") String name,
-					Pageable pageable) {
-
-		Page<ProductMinDTO> paginatedDto = productService.search(name, pageable);
-		return ResponseEntity.ok().body(paginatedDto);
-	}
+//
+//	@GetMapping(value = "/{id}")
+//	public ResponseEntity<ProductDTO> find(@PathVariable Long id) {
+//		ProductDTO dto = productService.findById(id);
+//		return ResponseEntity.ok().body(dto);
+//	}
+//
+//	@GetMapping(value = "/")
+//	public ResponseEntity<Page<ProductMinDTO>> fetch(
+//					@RequestParam(name = "name", defaultValue = "") String name,
+//					Pageable pageable) {
+//
+//		Page<ProductMinDTO> paginatedDto = productService.search(name, pageable);
+//		return ResponseEntity.ok().body(paginatedDto);
+//	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PostMapping(value = "/")
-	public ResponseEntity<ProductDTO> create(@Valid @RequestBody ProductDTO productDTO) {
-		ProductDTO dto = productService.insert(productDTO);
+	public ResponseEntity<IdGenericDTO> create(
+					@Valid @RequestBody CreateProductInputDTO createProductInputDTO) {
+
+		Long id = productService.create(createProductInputDTO);
 		URI uri = ServletUriComponentsBuilder
 						.fromCurrentRequestUri()
 						.path("/{id}")
-						.buildAndExpand(dto.id())
+						.buildAndExpand(id)
 						.toUri();
-		return ResponseEntity.created(uri).body(dto);
+		return ResponseEntity.created(uri).body(new IdGenericDTO("" + id));
 	}
 
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-	@PutMapping(value = "/{id}")
-	public ResponseEntity<ProductDTO> update(
-					@Valid @PathVariable Long id,
-					@RequestBody ProductDTO productDTO) {
-
-		ProductDTO dto = productService.update(id, productDTO);
-		return ResponseEntity.ok().body(dto);
-	}
-
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Long id) {
-		productService.delete(id);
-		return ResponseEntity.noContent().build();
-	}
+//	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+//	@PutMapping(value = "/{id}")
+//	public ResponseEntity<ProductDTO> update(
+//					@Valid @PathVariable Long id,
+//					@RequestBody ProductDTO productDTO) {
+//
+//		ProductDTO dto = productService.update(id, productDTO);
+//		return ResponseEntity.ok().body(dto);
+//	}
+//
+//	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+//	@DeleteMapping(value = "/{id}")
+//	public ResponseEntity<Void> delete(@PathVariable Long id) {
+//		productService.delete(id);
+//		return ResponseEntity.noContent().build();
+//	}
 }

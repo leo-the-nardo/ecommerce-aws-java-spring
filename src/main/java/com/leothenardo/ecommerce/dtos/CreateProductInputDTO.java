@@ -1,12 +1,16 @@
 package com.leothenardo.ecommerce.dtos;
 
+import com.leothenardo.ecommerce.models.Category;
 import com.leothenardo.ecommerce.models.Product;
 import jakarta.validation.constraints.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-public record ProductDTO(
+public record CreateProductInputDTO(
 				Long id,
 
 				@Size(min = 3, max = 80, message = "Name must be between 3 and 80 characters")
@@ -20,24 +24,26 @@ public record ProductDTO(
 				@Size(min = 10, max = 300, message = "Description must be between 10 and 300 characters")
 				String description,
 
-				@NotBlank(message = "ImgUrl is required")
-				String imgUrl,
+				String thumbId,
+
+				// from reference returned on upload
+				List<String> imagesIds,
 
 				@NotEmpty(message = "At least one category is required")
-				List<CategoryDTO> categories
+				Set<Long> categoriesId
 ) {
+	//toEntity
+	public Product toEntity() {
+		List<String> imgsRemovedDupKeepsOrder = imagesIds.stream().distinct().collect(Collectors.toList());
 
-
-	public static ProductDTO from(Product product) {
-		return new ProductDTO(
-						product.getId(),
-						product.getName(),
-						product.getPrice(),
-						product.getDescription(),
+		return new Product(
 						null,
-						product.getCategories().isEmpty() ?
-										new ArrayList<>()
-										: product.getCategories().stream().map(CategoryDTO::from).toList()
+						name,
+						description,
+						price,
+						thumbId,
+						imgsRemovedDupKeepsOrder,
+						categoriesId
 		);
 	}
 }
