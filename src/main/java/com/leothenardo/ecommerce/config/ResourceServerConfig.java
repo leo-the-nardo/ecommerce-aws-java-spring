@@ -29,16 +29,16 @@ public class ResourceServerConfig {
 
 	@Value("${cors.origins}")
 	private String corsOrigins;
-
-	@Bean
-	@Profile("test")
-	@Order(1)
-	public SecurityFilterChain h2SecurityFilterChain(HttpSecurity http) throws Exception {
-
-		http.securityMatcher(PathRequest.toH2Console()).csrf(csrf -> csrf.disable())
-						.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
-		return http.build();
-	}
+//
+//	@Bean
+//	@Profile("test")
+//	@Order(1)
+//	public SecurityFilterChain h2SecurityFilterChain(HttpSecurity http) throws Exception {
+//
+//		http.securityMatcher(PathRequest.toH2Console()).csrf(csrf -> csrf.disable())
+//						.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
+//		return http.build();
+//	}
 
 	@Bean
 	@Order(3)

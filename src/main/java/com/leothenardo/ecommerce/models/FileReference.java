@@ -27,7 +27,6 @@ public class FileReference {
 	@Enumerated(EnumType.STRING)
 	private Type type;
 
-
 	public FileReference(String id, OffsetDateTime createdAt, String name, String contentType, Long contentLength, boolean temp, Type type) {
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(contentType);
@@ -59,11 +58,11 @@ public class FileReference {
 		return name;
 	}
 
-	public String getContentType() {
+	public String getContentType() { // ex: application/pdf, image/png
 		return contentType;
 	}
 
-	public Long getContentLength() {
+	public Long getContentLength() { // ex: 2mb -> 2_000_000
 		return contentLength;
 	}
 
@@ -73,7 +72,7 @@ public class FileReference {
 
 	public void setTemp(boolean temp) {
 		this.temp = temp;
-	}
+	} // ebook service turn this false on create
 
 	public Type getType() {
 		return type;
@@ -81,6 +80,10 @@ public class FileReference {
 
 	public boolean isPublicAccessible() {
 		return this.type.publicAccessible;
+	}
+
+	public String getPath() { // ex: 1234-1234-1234-1234/document
+		return String.format("%s/%s", this.id, this.getName());
 	}
 
 	/// INTERNAL CLASSIFICATION, IS NOT CONTENT-TYPE
