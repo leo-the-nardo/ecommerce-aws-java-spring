@@ -1,8 +1,6 @@
 package com.leothenardo.ecommerce.controllers;
 
-import com.leothenardo.ecommerce.dtos.CreateProductInputDTO;
-import com.leothenardo.ecommerce.dtos.IdGenericDTO;
-import com.leothenardo.ecommerce.dtos.ProductMinDTO;
+import com.leothenardo.ecommerce.dtos.*;
 import com.leothenardo.ecommerce.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -23,21 +21,21 @@ public class ProductController {
 	public ProductController(ProductService productService) {
 		this.productService = productService;
 	}
-//
+
 //	@GetMapping(value = "/{id}")
 //	public ResponseEntity<ProductDTO> find(@PathVariable Long id) {
 //		ProductDTO dto = productService.findById(id);
 //		return ResponseEntity.ok().body(dto);
 //	}
-//
-//	@GetMapping(value = "/")
-//	public ResponseEntity<Page<ProductMinDTO>> fetch(
-//					@RequestParam(name = "name", defaultValue = "") String name,
-//					Pageable pageable) {
-//
-//		Page<ProductMinDTO> paginatedDto = productService.search(name, pageable);
-//		return ResponseEntity.ok().body(paginatedDto);
-//	}
+
+	@GetMapping(value = "/")
+	public ResponseEntity<Page<SearchProductMinResultDTO>> fetch(
+					@RequestParam(name = "name", defaultValue = "") String name,
+					Pageable pageable) {
+
+		Page<SearchProductMinResultDTO> paginatedDto = productService.search(name, pageable);
+		return ResponseEntity.ok().body(paginatedDto);
+	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PostMapping(value = "/")

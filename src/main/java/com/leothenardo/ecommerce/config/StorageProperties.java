@@ -21,10 +21,18 @@ public class StorageProperties {
 	@Valid
 	private Image image = new Image();
 
+	@Valid
+	private Thumb thumb = new Thumb();
+
 	public S3 getS3() {
 		return s3;
 	}
-	
+
+	public Thumb getThumb() {
+		return thumb;
+	}
+
+
 	public Image getImage() {
 		return image;
 	}
@@ -84,6 +92,19 @@ public class StorageProperties {
 			this.downloadUrl = downloadUrl;
 		}
 
+	}
+
+	public class Thumb {
+		@NotNull
+		private URL downloadUrl;
+
+		public URL getDownloadUrl() {
+			return downloadUrl;
+		}
+
+		public void setDownloadUrl(URL downloadUrl) {
+			this.downloadUrl = downloadUrl;
+		}
 	}
 
 }

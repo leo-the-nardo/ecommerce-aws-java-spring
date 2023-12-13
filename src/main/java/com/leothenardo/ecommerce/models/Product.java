@@ -16,8 +16,10 @@ public class Product {
 	@Column(columnDefinition = "TEXT")
 	private String description;
 	private Double price;
+	private String thumbPath;
 
-	@OneToOne(cascade = CascadeType.ALL)
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private FileReference thumb;
 
 	// relation
@@ -67,7 +69,9 @@ public class Product {
 					Double price,
 					FileReference thumb,
 					List<FileReference> images,
-					Set<Category> categories) {
+					Set<Category> categories,
+					String thumbPath
+	) {
 
 		this.name = name;
 		this.description = description;
@@ -75,6 +79,7 @@ public class Product {
 		this.thumb = thumb;
 		this.categories = categories;
 		this.images = images;
+		this.thumbPath = thumbPath;
 
 	}
 
@@ -117,6 +122,10 @@ public class Product {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getThumbPath() {
+		return thumbPath;
 	}
 
 	public Double getPrice() {
