@@ -2,6 +2,7 @@ package com.leothenardo.ecommerce.models;
 
 import jakarta.persistence.*;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,7 @@ public class Product {
 	private Double price;
 	private String thumbPath;
 
+	private Instant deletedAt;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private FileReference thumb;
@@ -188,5 +190,9 @@ public class Product {
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
+	}
+
+	public void delete() {
+		this.deletedAt = Instant.now();
 	}
 }

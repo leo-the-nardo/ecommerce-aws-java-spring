@@ -38,4 +38,11 @@ public class StorageService {
 		return cloudStorageProvider.fileExists(fileReference.getPath());
 	}
 
+	public void softDelete(FileReference fileReference) {
+		if (fileReference == null) {
+			return;
+		}
+		cloudStorageProvider.moveFile(fileReference.getPath(), "deleted/" + fileReference.getPath());
+	}
+
 }

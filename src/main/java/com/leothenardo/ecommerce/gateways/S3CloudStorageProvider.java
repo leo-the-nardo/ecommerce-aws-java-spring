@@ -3,6 +3,7 @@ package com.leothenardo.ecommerce.gateways;
 
 import com.leothenardo.ecommerce.config.StorageProperties;
 import com.leothenardo.ecommerce.models.FileReference;
+import com.leothenardo.ecommerce.services.exceptions.StorageCloudException;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.awscore.AwsRequestOverrideConfiguration;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -72,6 +73,37 @@ public class S3CloudStorageProvider implements CloudStorageProvider {
 		}
 	}
 
+	public void moveFile(String fromPath, String toPath) {
+		CopyObjectRequest copyObjReq = CopyObjectRequest.builder()
+						.sourceBucket(getBucket())
+						.destinationBucket(getBucket())
+						.sourceKey(fromPath)
+						.destinationKey(toPath)
+						.build();
+
+		try {
+			s3Client.copyObject(copyObjReq);
+		} catch (S3Exception e) {
+			//quem captura a exception decide se vai exibir ou nao, mas a causa raiz vai estar no log
+//			log.error(String.format("Error moving file from %s to %s", fromPath, toPath), e);
+			throw new StorageCloudException(String.format("Error moving file from %s to %s", fromPath, toPath));
+		}
+		removeFile(fromPath);
+	}
+
+	private void removeFile(String filePath) {
+		DeleteObjectRequest deleteObjReq = DeleteObjectRequest.builder()
+						.bucket(getBucket())
+						.key(filePath)
+						.build();
+		try {
+			s3Client.deleteObject(deleteObjReq);
+		} catch (S3Exception e) {
+			//quem captura a exception decide se vai exibir ou nao, mas a causa raiz vai estar no log
+//			log.error(String.format("Error removing file %s", filePath), e);
+			throw new StorageCloudException(String.format("Error removing file %s", filePath));
+		}
+	}
 
 	private String getBucket() {
 		return storageProperties.getS3().getBucketName();

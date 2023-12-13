@@ -18,10 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ProductService {
@@ -117,8 +114,13 @@ public class ProductService {
 //	}
 
 	@Transactional
-	public void delete(Long id) {
-		productRepository.deleteById(id);
+	public void softDelete(Long id) {
+		Product product = productRepository.findById(id)
+						.orElseThrow(() -> new ResourceNotFoundException(id));
+		product.delete();
+		storageService.softDelete(product.getThumb());
+		product.getImages().forEach(storageService::softDelete);
+		productRepository.save(product);
 	}
 
 	private Set<Category> getCategories(Set<Long> categoriesId) {

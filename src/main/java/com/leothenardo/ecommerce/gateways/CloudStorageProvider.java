@@ -8,4 +8,6 @@ public interface CloudStorageProvider {
 	URL generatePresignedUploadUrl(FileReference fileReference);
 
 	boolean fileExists(String filePath);
+
+	void moveFile(String fromPath, String toPath);
 }

@@ -1,6 +1,7 @@
 package com.leothenardo.ecommerce.controllers;
 
 import com.leothenardo.ecommerce.dtos.*;
+import com.leothenardo.ecommerce.models.Product;
 import com.leothenardo.ecommerce.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -50,7 +51,7 @@ public class ProductController {
 						.toUri();
 		return ResponseEntity.created(uri).body(new IdGenericDTO("" + id));
 	}
-
+//
 //	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 //	@PutMapping(value = "/{id}")
 //	public ResponseEntity<ProductDTO> update(
@@ -60,11 +61,11 @@ public class ProductController {
 //		ProductDTO dto = productService.update(id, productDTO);
 //		return ResponseEntity.ok().body(dto);
 //	}
-//
-//	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-//	@DeleteMapping(value = "/{id}")
-//	public ResponseEntity<Void> delete(@PathVariable Long id) {
-//		productService.delete(id);
-//		return ResponseEntity.noContent().build();
-//	}
+
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	@DeleteMapping(value = "/{id}")
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
+		productService.softDelete(id);
+		return ResponseEntity.noContent().build();
+	}
 }
