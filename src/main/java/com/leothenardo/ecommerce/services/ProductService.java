@@ -117,7 +117,10 @@ public class ProductService {
 	public void softDelete(Long id) {
 		Product product = productRepository.findById(id)
 						.orElseThrow(() -> new ResourceNotFoundException(id));
+
 		product.delete();
+		product.getImages().forEach(image -> image.setTemp(true));
+		product.getThumb().setTemp(true);
 		storageService.softDelete(product.getThumb());
 		product.getImages().forEach(storageService::softDelete);
 		productRepository.save(product);

@@ -73,12 +73,13 @@ public class S3CloudStorageProvider implements CloudStorageProvider {
 		}
 	}
 
-	public void moveFile(String fromPath, String toPath) {
+	public void moveFileAsDelete(String fromPath, String toPath) {
 		CopyObjectRequest copyObjReq = CopyObjectRequest.builder()
 						.sourceBucket(getBucket())
 						.destinationBucket(getBucket())
 						.sourceKey(fromPath)
 						.destinationKey(toPath)
+						.storageClass(StorageClass.DEEP_ARCHIVE)
 						.build();
 
 		try {
