@@ -38,14 +38,6 @@ public class Product {
 	private Set<OrderItem> orderItems = new HashSet<>();
 
 
-	//	public Product(Long id, String name, String description, Double price, List<FileReference> images, Set<Category> categories) {
-//		this.id = id;
-//		this.name = name;
-//		this.description = description;
-//		this.price = price;
-//		this.imgUrl = imgUrl;
-//		this.categories = categories;
-//	}
 	public Product(
 					Long id,
 					String name,
