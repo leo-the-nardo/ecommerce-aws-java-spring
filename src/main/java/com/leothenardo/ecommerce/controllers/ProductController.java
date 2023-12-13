@@ -22,11 +22,11 @@ public class ProductController {
 		this.productService = productService;
 	}
 
-//	@GetMapping(value = "/{id}")
-//	public ResponseEntity<ProductDTO> find(@PathVariable Long id) {
-//		ProductDTO dto = productService.findById(id);
-//		return ResponseEntity.ok().body(dto);
-//	}
+	@GetMapping(value = "/{id}")
+	public ResponseEntity<FindProductOutputDTO> find(@PathVariable Long id) {
+		FindProductOutputDTO dto = productService.findById(id);
+		return ResponseEntity.ok().body(dto);
+	}
 
 	@GetMapping(value = "/")
 	public ResponseEntity<Page<SearchProductMinResultDTO>> fetch(

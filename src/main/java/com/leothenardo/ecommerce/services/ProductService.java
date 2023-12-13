@@ -1,8 +1,9 @@
 package com.leothenardo.ecommerce.services;
 
 import com.leothenardo.ecommerce.config.StorageProperties;
+import com.leothenardo.ecommerce.dtos.CategoryDTO;
 import com.leothenardo.ecommerce.dtos.CreateProductInputDTO;
-import com.leothenardo.ecommerce.dtos.ProductDTO;
+import com.leothenardo.ecommerce.dtos.FindProductOutputDTO;
 import com.leothenardo.ecommerce.dtos.SearchProductMinResultDTO;
 import com.leothenardo.ecommerce.models.Category;
 import com.leothenardo.ecommerce.models.FileReference;
@@ -39,11 +40,23 @@ public class ProductService {
 	}
 
 	@Transactional(readOnly = true)
-	public ProductDTO findById(Long id) {
-		Product productDb = productRepository
+	public FindProductOutputDTO findById(Long id) {
+		Product product = productRepository
 						.findById(id)
 						.orElseThrow(() -> new ResourceNotFoundException(id));
-		return ProductDTO.from(productDb);
+		List<String> imagesURL = new ArrayList<>();
+		if (!product.getImages().isEmpty()) {
+			product.getImages().forEach(image -> imagesURL.add(toImageUrl(image.getPath())));
+		}
+		return new FindProductOutputDTO(
+						product.getId(),
+						product.getName(),
+						product.getPrice(),
+						product.getDescription(),
+						toThumbUrl(product.getThumbPath()),
+						imagesURL,
+						product.getCategories().stream().map(CategoryDTO::from).toList()
+		);
 	}
 
 	@Transactional(readOnly = true)
@@ -53,7 +66,7 @@ public class ProductService {
 						p.getId(),
 						p.getName(),
 						p.getPrice(),
-						getThumbUrl(p.getThumbPath())));
+						toThumbUrl(p.getThumbPath())));
 	}
 
 	@Transactional
@@ -155,7 +168,12 @@ public class ProductService {
 		return thumb;
 	}
 
-	private String getThumbUrl(String thumbPath) {
+	private String toThumbUrl(String thumbPath) {
 		return storageProperties.getThumb().getDownloadUrl() + "/" + thumbPath;
+	}
+
+	private String toImageUrl(String imagePath) {
+		if (imagePath == null) return null;
+		return storageProperties.getImage().getDownloadUrl() + "/" + imagePath;
 	}
 }
