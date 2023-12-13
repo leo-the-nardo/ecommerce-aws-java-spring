@@ -1,9 +1,7 @@
 package com.leothenardo.ecommerce.dtos;
 
-import com.leothenardo.ecommerce.models.Product;
 import jakarta.validation.constraints.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public record FindProductOutputDTO(

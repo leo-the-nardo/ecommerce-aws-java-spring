@@ -1,7 +1,6 @@
 package com.leothenardo.ecommerce.controllers;
 
 import com.leothenardo.ecommerce.dtos.*;
-import com.leothenardo.ecommerce.models.Product;
 import com.leothenardo.ecommerce.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

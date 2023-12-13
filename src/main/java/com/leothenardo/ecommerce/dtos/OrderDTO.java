@@ -1,7 +1,6 @@
 package com.leothenardo.ecommerce.dtos;
 
 import com.leothenardo.ecommerce.models.Order;
-import com.leothenardo.ecommerce.models.OrderItem;
 import com.leothenardo.ecommerce.models.OrderStatus;
 import jakarta.validation.constraints.NotEmpty;
 
