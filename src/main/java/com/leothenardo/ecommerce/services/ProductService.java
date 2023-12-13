@@ -1,10 +1,7 @@
 package com.leothenardo.ecommerce.services;
 
 import com.leothenardo.ecommerce.config.StorageProperties;
-import com.leothenardo.ecommerce.dtos.CategoryDTO;
-import com.leothenardo.ecommerce.dtos.CreateProductInputDTO;
-import com.leothenardo.ecommerce.dtos.FindProductOutputDTO;
-import com.leothenardo.ecommerce.dtos.SearchProductMinResultDTO;
+import com.leothenardo.ecommerce.dtos.*;
 import com.leothenardo.ecommerce.models.Category;
 import com.leothenardo.ecommerce.models.FileReference;
 import com.leothenardo.ecommerce.models.Product;
@@ -88,30 +85,52 @@ public class ProductService {
 		return persistedProduct.getId();
 	}
 
-//	@Transactional
-//	public ProductDTO update(Long id, ProductDTO productDTO) {
-//		Product previousProduct = productRepository
-//						.findById(id)
-//						.orElseThrow(() -> new ResourceNotFoundException(id));
-//
-//		Set<Category> newCategoriesOrPrevious = productDTO.categories() != null && !productDTO.categories().isEmpty() ?
-//						new HashSet<>(productDTO.categories().stream().map(
-//										categoryDTO -> new Category(categoryDTO.id(), null, null)).toList()
-//						)
-//						: previousProduct.getCategories();
-//
-//		Product product = new Product(
-//						id,
-//						productDTO.name() != null ? productDTO.name() : previousProduct.getName(),
-//						productDTO.description() != null ? productDTO.description() : previousProduct.getDescription(),
-//						productDTO.price() != null ? productDTO.price() : previousProduct.getPrice(),
-//						productDTO.imgUrl() != null ? productDTO.imgUrl() : previousProduct.getImgUrl(),
-//						newCategoriesOrPrevious
-//		);
-//
-//		Product persistedProduct = productRepository.save(product);
-//		return ProductDTO.from(persistedProduct);
-//	}
+	@Transactional
+	public void update(Long id, UpdateProductInputDTO productDTO) {
+		Product previousProduct = productRepository
+						.findById(id)
+						.orElseThrow(() -> new ResourceNotFoundException(id));
+
+		Set<Category> categories = productDTO.categoriesIds() != null && !productDTO.categoriesIds().isEmpty() ?
+						new HashSet<>(productDTO.categoriesIds().stream().map(
+										cId -> new Category(cId, null, null)).toList()
+						)
+						: previousProduct.getCategories();
+
+		FileReference thumb = productDTO.thumbId() != null ?
+						getThumbReference(productDTO.thumbId())
+						: previousProduct.getThumb();
+
+		List<FileReference> images = productDTO.imagesIds() != null ?
+						getImagesReferences(productDTO.imagesIds())
+						: previousProduct.getImages();
+
+		Product product = new Product(
+						id,
+						productDTO.name() != null ? productDTO.name() : previousProduct.getName(),
+						productDTO.description() != null ? productDTO.description() : previousProduct.getDescription(),
+						productDTO.price() != null ? productDTO.price() : previousProduct.getPrice(),
+						thumb,
+						images,
+						categories,
+						thumb.getPath()
+		);
+		if (productDTO.thumbId() != null && !productDTO.thumbId().equals(previousProduct.getThumb().getId())) {
+			previousProduct.getThumb().setTemp(true);
+			storageService.softDelete(previousProduct.getThumb());
+		}
+		if (productDTO.imagesIds() != null) {
+			previousProduct.getImages().forEach(image -> {
+				if (!productDTO.imagesIds().contains(image.getId())) {
+					image.setTemp(true);
+					storageService.softDelete(image);
+				}
+			});
+		}
+		product.getImages().forEach(image -> image.setTemp(false));
+		product.getThumb().setTemp(false);
+		productRepository.save(product);
+	}
 
 	@Transactional
 	public void softDelete(Long id) {

@@ -9,5 +9,5 @@ public interface CloudStorageProvider {
 
 	boolean fileExists(String filePath);
 
-	void moveFile(String fromPath, String toPath);
+	void moveFileAsDelete(String fromPath, String toPath);
 }

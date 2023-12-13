@@ -5,14 +5,9 @@ import com.leothenardo.ecommerce.dtos.UploadRequestResultDTO;
 import com.leothenardo.ecommerce.gateways.CloudStorageProvider;
 import com.leothenardo.ecommerce.models.FileReference;
 import com.leothenardo.ecommerce.repositories.FileReferenceRepository;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URL;
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -42,7 +37,7 @@ public class StorageService {
 		if (fileReference == null) {
 			return;
 		}
-		cloudStorageProvider.moveFile(fileReference.getPath(), "deleted/" + fileReference.getPath());
+		cloudStorageProvider.moveFileAsDelete(fileReference.getPath(), "deleted/" + fileReference.getPath());
 	}
 
 }

@@ -38,7 +38,7 @@ public class Product {
 	private Set<OrderItem> orderItems = new HashSet<>();
 
 
-//	public Product(Long id, String name, String description, Double price, List<FileReference> images, Set<Category> categories) {
+	//	public Product(Long id, String name, String description, Double price, List<FileReference> images, Set<Category> categories) {
 //		this.id = id;
 //		this.name = name;
 //		this.description = description;
@@ -46,22 +46,24 @@ public class Product {
 //		this.imgUrl = imgUrl;
 //		this.categories = categories;
 //	}
-
-	public Product(Long id,
-								 String name,
-								 String description,
-								 Double price,
-								 String thumbId,
-								 List<String> imagesId,
-								 Set<Long> categoriesId) {
-
+	public Product(
+					Long id,
+					String name,
+					String description,
+					Double price,
+					FileReference thumb,
+					List<FileReference> images,
+					Set<Category> categories,
+					String thumbPath
+	) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.price = price;
-		this.thumb = mapThumb(thumbId);
-		this.categories = mapCategories(categoriesId);
-		this.images = mapImages(imagesId);
+		this.thumb = thumb;
+		this.categories = categories;
+		this.images = images;
+		this.thumbPath = thumbPath;
 
 	}
 
@@ -140,42 +142,6 @@ public class Product {
 
 	public List<FileReference> getImages() {
 		return images;
-	}
-
-	private List<FileReference> mapImages(List<String> imagesId) {
-		if (imagesId == null || imagesId.isEmpty()) return new ArrayList<>();
-		return imagesId.stream().map(
-						imgId -> new FileReference(
-										imgId,
-										null,
-										null,
-										null,
-										null,
-										false,
-										null
-						)
-		).toList();
-	}
-
-	//mapCategories
-	private Set<Category> mapCategories(Set<Long> categoriesId) {
-		return categoriesId.stream().map(
-						categoryId -> new Category(categoryId, null, null)
-		).collect(Collectors.toSet());
-	}
-
-	//mapThumb
-	private FileReference mapThumb(String thumbId) {
-		if (thumbId == null) return null;
-		return new FileReference(
-						thumbId,
-						null,
-						null,
-						null,
-						null,
-						false,
-						null
-		);
 	}
 
 

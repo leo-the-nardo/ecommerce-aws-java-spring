@@ -51,16 +51,16 @@ public class ProductController {
 						.toUri();
 		return ResponseEntity.created(uri).body(new IdGenericDTO("" + id));
 	}
-//
-//	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-//	@PutMapping(value = "/{id}")
-//	public ResponseEntity<ProductDTO> update(
-//					@Valid @PathVariable Long id,
-//					@RequestBody ProductDTO productDTO) {
-//
-//		ProductDTO dto = productService.update(id, productDTO);
-//		return ResponseEntity.ok().body(dto);
-//	}
+
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	@PutMapping(value = "/{id}")
+	public ResponseEntity<Void> update(
+					@Valid @PathVariable Long id,
+					@RequestBody UpdateProductInputDTO productDTO) {
+
+		productService.update(id, productDTO);
+		return ResponseEntity.noContent().build();
+	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@DeleteMapping(value = "/{id}")

@@ -32,18 +32,5 @@ public record CreateProductInputDTO(
 				@NotEmpty(message = "At least one category is required")
 				Set<Long> categoriesId
 ) {
-	//toEntity
-	public Product toEntity() {
-		List<String> imgsRemovedDupKeepsOrder = imagesIds.stream().distinct().collect(Collectors.toList());
 
-		return new Product(
-						null,
-						name,
-						description,
-						price,
-						thumbId,
-						imgsRemovedDupKeepsOrder,
-						categoriesId
-		);
-	}
 }
