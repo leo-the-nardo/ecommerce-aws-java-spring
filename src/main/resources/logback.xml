@@ -1,0 +1,22 @@
+<configuration>
+   <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder> <!-- By default, encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
+         <pattern>%date{yyyy-MM-dd HH:mm:ss} %highlight(%-5level) %cyan(%logger{15}) - %msg %n</pattern>
+      </encoder>
+   </appender>
+
+   <appender name="file" class="ch.qos.logback.core.FileAppender">
+      <file>logs/ecommerce.log</file>
+      <append>true</append>
+      <encoder>
+         <pattern>%date{yyyy-MM-dd HH:mm:ss} %-5level %logger{15} - %msg %n</pattern>
+      </encoder>
+   </appender>
+
+   <logger name="com.leothenardo.ecommerce.services" level="TRACE"/>
+
+   <root level="INFO"> <!-- Binding root to appender -->
+      <appender-ref ref="stdout"/>
+      <appender-ref ref="file"/>
+   </root>
+</configuration>

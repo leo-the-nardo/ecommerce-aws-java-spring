@@ -4,6 +4,8 @@ package com.leothenardo.ecommerce.gateways;
 import com.leothenardo.ecommerce.config.StorageProperties;
 import com.leothenardo.ecommerce.models.FileReference;
 import com.leothenardo.ecommerce.services.exceptions.StorageCloudException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.awscore.AwsRequestOverrideConfiguration;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -16,10 +18,11 @@ import java.time.Duration;
 
 @Component
 public class S3CloudStorageProvider implements CloudStorageProvider {
-
+	private final static Logger log = LoggerFactory.getLogger(S3CloudStorageProvider.class);
 	private final S3Presigner s3Presigner;
 	private final S3Client s3Client;
 	private final StorageProperties storageProperties;
+
 
 	public S3CloudStorageProvider(S3Presigner s3Presigner, S3Client s3Client, StorageProperties storageProperties) {
 		this.s3Presigner = s3Presigner;
@@ -85,8 +88,7 @@ public class S3CloudStorageProvider implements CloudStorageProvider {
 		try {
 			s3Client.copyObject(copyObjReq);
 		} catch (S3Exception e) {
-			//quem captura a exception decide se vai exibir ou nao, mas a causa raiz vai estar no log
-//			log.error(String.format("Error moving file from %s to %s", fromPath, toPath), e);
+			log.error(String.format("Error moving file from %s to %s", fromPath, toPath), e);
 			throw new StorageCloudException(String.format("Error moving file from %s to %s", fromPath, toPath));
 		}
 		removeFile(fromPath);
@@ -100,8 +102,7 @@ public class S3CloudStorageProvider implements CloudStorageProvider {
 		try {
 			s3Client.deleteObject(deleteObjReq);
 		} catch (S3Exception e) {
-			//quem captura a exception decide se vai exibir ou nao, mas a causa raiz vai estar no log
-//			log.error(String.format("Error removing file %s", filePath), e);
+			log.error(String.format("Error removing file %s", filePath), e);
 			throw new StorageCloudException(String.format("Error removing file %s", filePath));
 		}
 	}

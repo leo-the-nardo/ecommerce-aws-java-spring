@@ -33,4 +33,7 @@ build/
 .vscode/
 
 ### VOLUMES ###
-.docker
+.docker/
+
+### LOGS ###
+logs/
