@@ -7,6 +7,7 @@
 - Spring
 - Spring Security
 - Spring Data JPA
+- SMTP
 - Localstack
 - Junit
 - Mockito

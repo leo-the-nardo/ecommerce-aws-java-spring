@@ -2,11 +2,14 @@ package com.leothenardo.ecommerce.controllers.interceptors;
 
 import com.leothenardo.ecommerce.dtos.CustomError;
 import com.leothenardo.ecommerce.dtos.ValidationError;
+import com.leothenardo.ecommerce.services.exceptions.AlreadyExists;
+import com.leothenardo.ecommerce.services.exceptions.ExpiredException;
 import com.leothenardo.ecommerce.services.exceptions.ForbiddenException;
 import com.leothenardo.ecommerce.services.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -52,4 +55,29 @@ public class ControllerExceptionHandler {
 		);
 		return ResponseEntity.status(status).body(error);
 	}
+
+	@ExceptionHandler(ExpiredException.class)
+	public ResponseEntity<CustomError> expired(ExpiredException e, HttpServletRequest request) {
+		var status = HttpStatus.UNAUTHORIZED;
+		CustomError error = new CustomError(
+						Instant.now(),
+						status.value(),
+						e.getMessage(),
+						request.getRequestURI()
+		);
+		return ResponseEntity.status(status).body(error);
+	}
+
+	@ExceptionHandler(AlreadyExists.class)
+	public ResponseEntity<CustomError> alreadyExists(AlreadyExists e, HttpServletRequest request) {
+		var status = HttpStatus.CONFLICT;
+		CustomError error = new CustomError(
+						Instant.now(),
+						status.value(),
+						e.getMessage(),
+						request.getRequestURI()
+		);
+		return ResponseEntity.status(status).body(error);
+	}
+
 }

@@ -114,6 +114,7 @@ public class AuthorizationServerConfig {
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
+		;
 		return new BCryptPasswordEncoder();
 	}
 

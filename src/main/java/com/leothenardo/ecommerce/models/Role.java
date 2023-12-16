@@ -21,6 +21,7 @@ public class Role implements GrantedAuthority {
 		this.authority = authority;
 	}
 
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -42,4 +43,8 @@ public class Role implements GrantedAuthority {
 	public String getAuthority() {
 		return authority;
 	}
+
+	//"USER" , "ADMIN" authority static factory methods
+
+
 }

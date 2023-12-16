@@ -20,6 +20,7 @@ public class User implements UserDetails {
 	private String phone;
 	private String password;
 	private LocalDate birthDate;
+	private Boolean isConfirmed = false;
 
 	@OneToMany(mappedBy = "client")
 	private List<Order> orders = new ArrayList<>();
@@ -33,6 +34,13 @@ public class User implements UserDetails {
 	public User() {
 	}
 
+	public User(String name, String email, String phone, LocalDate birthDate, String password) {
+		this.name = name;
+		this.email = email;
+		this.phone = phone;
+		this.birthDate = birthDate;
+		this.password = password;
+	}
 
 	public User(Long id, String name, String email, String phone, LocalDate birthDate, String password, List<Order> orders) {
 		this.id = id;
@@ -120,7 +128,11 @@ public class User implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return isConfirmed;
+	}
+
+	public void setIsEnabled(Boolean enabled) {
+		this.isConfirmed = enabled;
 	}
 
 	public List<Order> getOrders() {

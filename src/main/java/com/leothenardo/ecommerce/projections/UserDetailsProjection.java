@@ -8,5 +8,7 @@ public interface UserDetailsProjection {
 	Long getRoleId();
 
 	String getAuthority();
+
+	Boolean getIsEnabled();
 }
 

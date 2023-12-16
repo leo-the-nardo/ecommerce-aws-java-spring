@@ -1,10 +1,12 @@
 package com.leothenardo.ecommerce.services;
 
 import com.leothenardo.ecommerce.dtos.UserDTO;
+import com.leothenardo.ecommerce.models.ConfirmationToken;
 import com.leothenardo.ecommerce.models.Role;
 import com.leothenardo.ecommerce.models.User;
 import com.leothenardo.ecommerce.projections.UserDetailsProjection;
 import com.leothenardo.ecommerce.repositories.UserRepository;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,31 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+
 @Service
 public class UserService implements UserDetailsService {
 
 	private final UserRepository userRepository;
 
+
 	public UserService(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		List<UserDetailsProjection> queryResult = userRepository.searchUserAndRole(username);
-		if (queryResult.isEmpty()) {
-			throw new UsernameNotFoundException("Email not found");
-		}
-		UserDetailsProjection userProjection = queryResult.get(0);
-		User userJpaEntity = new User();
-		userJpaEntity.setEmail(userProjection.getUsername());
-		userJpaEntity.setPassword(userProjection.getPassword());
-
-		queryResult.forEach(userRow -> userJpaEntity.addRole(
-						new Role(userRow.getRoleId(), userRow.getAuthority())
-		));
-		return userJpaEntity;
-	}
 
 	protected User authenticated() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -54,4 +42,33 @@ public class UserService implements UserDetailsService {
 		User user = authenticated();
 		return UserDTO.from(user);
 	}
+
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		List<UserDetailsProjection> queryResult = userRepository.searchUserAndRole(username);
+		if (queryResult.isEmpty()) {
+			throw new UsernameNotFoundException("Email not found");
+		}
+		UserDetailsProjection userProjection = queryResult.get(0);
+
+		User userJpaEntity = new User();
+		userJpaEntity.setEmail(userProjection.getUsername());
+		userJpaEntity.setPassword(userProjection.getPassword());
+		userJpaEntity.setIsEnabled(userProjection.getIsEnabled());
+
+		if (!userJpaEntity.isEnabled()) {
+			throw new DisabledException("User not confirmed, please check your email for the confirmation link");
+		}
+
+		queryResult.forEach(userRow -> userJpaEntity.addRole(
+						new Role(userRow.getRoleId(), userRow.getAuthority())
+		));
+		return userJpaEntity;
+	}
+
+	public int enableAppUser(String email) {
+		return userRepository.enableAppUser(email);
+	}
+
 }
