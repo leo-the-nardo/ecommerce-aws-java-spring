@@ -53,6 +53,7 @@ public class RegistrationService {
 										registerDTO.name(),
 										registerDTO.email(),
 										registerDTO.phone(),
+										registerDTO.cpf(),
 										LocalDate.of(2000, 1, 1),
 										registerDTO.password()
 						), appUrl
@@ -107,7 +108,6 @@ public class RegistrationService {
 
 			String link = appUrl + "/confirm?token=" + newToken;
 			String to = confirmationToken.getAppUser().getEmail();
-			System.out.println(to);
 			String content = buildEmail(confirmationToken.getAppUser().getName(), link);
 			emailSender.send(to, content);
 			return "Sent new confirmation email";

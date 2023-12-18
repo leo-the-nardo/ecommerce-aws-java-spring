@@ -2,10 +2,7 @@ package com.leothenardo.ecommerce.controllers.interceptors;
 
 import com.leothenardo.ecommerce.dtos.CustomError;
 import com.leothenardo.ecommerce.dtos.ValidationError;
-import com.leothenardo.ecommerce.services.exceptions.AlreadyExists;
-import com.leothenardo.ecommerce.services.exceptions.ExpiredException;
-import com.leothenardo.ecommerce.services.exceptions.ForbiddenException;
-import com.leothenardo.ecommerce.services.exceptions.ResourceNotFoundException;
+import com.leothenardo.ecommerce.services.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,6 +68,18 @@ public class ControllerExceptionHandler {
 	@ExceptionHandler(AlreadyExists.class)
 	public ResponseEntity<CustomError> alreadyExists(AlreadyExists e, HttpServletRequest request) {
 		var status = HttpStatus.CONFLICT;
+		CustomError error = new CustomError(
+						Instant.now(),
+						status.value(),
+						e.getMessage(),
+						request.getRequestURI()
+		);
+		return ResponseEntity.status(status).body(error);
+	}
+
+	@ExceptionHandler(PaymentGatewayException.class)
+	public ResponseEntity<CustomError> paymentGatewayException(PaymentGatewayException e, HttpServletRequest request) {
+		var status = HttpStatus.BAD_REQUEST;
 		CustomError error = new CustomError(
 						Instant.now(),
 						status.value(),

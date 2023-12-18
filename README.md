@@ -4,9 +4,13 @@
 
 - Java
 - AWS
+- Asaas Payment Gateway
 - Spring
+- Redis
+- MySQL
 - Spring Security
 - Spring Data JPA
+- WebFlux
 - SMTP
 - Localstack
 - Junit

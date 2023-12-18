@@ -19,6 +19,7 @@ public class User implements UserDetails {
 	private String email;
 	private String phone;
 	private String password;
+	private String cpf;
 	private LocalDate birthDate;
 	private Boolean isConfirmed = false;
 
@@ -34,21 +35,23 @@ public class User implements UserDetails {
 	public User() {
 	}
 
-	public User(String name, String email, String phone, LocalDate birthDate, String password) {
+	public User(String name, String email, String cpf, String phone, LocalDate birthDate, String password) {
 		this.name = name;
 		this.email = email;
 		this.phone = phone;
 		this.birthDate = birthDate;
 		this.password = password;
+		this.cpf = cpf;
 	}
 
-	public User(Long id, String name, String email, String phone, LocalDate birthDate, String password, List<Order> orders) {
+	public User(Long id, String name, String email, String cpf, String phone, LocalDate birthDate, String password, List<Order> orders) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.phone = phone;
 		this.birthDate = birthDate;
 		this.password = password;
+		this.cpf = cpf;
 		this.orders = orders;
 	}
 
@@ -149,6 +152,14 @@ public class User implements UserDetails {
 
 	public void addRole(Role role) {
 		roles.add(role);
+	}
+
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
 	}
 
 	public boolean hasRole(String roleName) {

@@ -8,7 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "api/v1/registration")
+@RequestMapping(path = "/registration")
 public class RegistrationController {
 	private final RegistrationService registrationService;
 
@@ -21,7 +21,6 @@ public class RegistrationController {
 	public String register(
 					@RequestBody RegisterUserInputDTO bodyDTO,
 					HttpServletRequest request) {
-		System.out.println(appUrl(request));
 		return registrationService.register(bodyDTO, appUrl(request));
 	}
 
@@ -44,7 +43,7 @@ public class RegistrationController {
 	}
 
 	private String appUrlNoPath(HttpServletRequest request) {
-		return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/api/v1/registration";
+		return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/registration";
 	}
 
 }

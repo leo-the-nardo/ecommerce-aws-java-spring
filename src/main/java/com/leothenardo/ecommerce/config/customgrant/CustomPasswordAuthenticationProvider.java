@@ -74,8 +74,6 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 
 		UserDetails user = null;
 		try {
-			System.out.println("username: " + username);
-			System.out.println("password: " + password);
 			user = userDetailsService.loadUserByUsername(username);
 		} catch (UsernameNotFoundException e) {
 			throw new OAuth2AuthenticationException("Invalid credentials");

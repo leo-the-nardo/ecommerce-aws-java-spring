@@ -6,6 +6,7 @@ import java.util.List;
 public record RegisterUserInputDTO(
 				String name,
 				String email,
+				String cpf,
 				String phone,
 				String password
 ) {

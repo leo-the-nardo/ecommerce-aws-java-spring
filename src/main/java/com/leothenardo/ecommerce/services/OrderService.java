@@ -41,7 +41,7 @@ public class OrderService {
 		});
 		try {
 			authService.validateSelfOrAdmin(order.getClient().getId());
-			log.info("User {} get order {}", userService.authenticated(), id); // If it's not admin or the user itself, it will throw an exception
+			log.info("User {} get order {}", userService.authenticated().getId(), id);
 			return OrderDTO.from(order);
 
 		} catch (ForbiddenException e) {
@@ -65,6 +65,15 @@ public class OrderService {
 		order = orderRepository.save(order);
 		orderItemRepository.saveAll(order.getItems());
 		log.info("Order created: {}", order.getId());
+		return OrderDTO.from(order);
+	}
+
+	@Transactional(readOnly = true)
+	public OrderDTO internalGet(Long id) {
+		Order order = orderRepository.findById(id).orElseThrow(() -> {
+			log.info("Order not found: {}", id);
+			return new ResourceNotFoundException(id);
+		});
 		return OrderDTO.from(order);
 	}
 }
