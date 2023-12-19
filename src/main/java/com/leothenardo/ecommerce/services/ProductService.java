@@ -192,7 +192,7 @@ public class ProductService {
 		return thumb;
 	}
 
-	private String toThumbUrl(String thumbPath) {
+	public String toThumbUrl(String thumbPath) {
 		return storageProperties.getThumb().getDownloadUrl() + "/" + thumbPath;
 	}
 

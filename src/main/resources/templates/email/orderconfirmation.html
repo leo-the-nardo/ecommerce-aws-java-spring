@@ -139,120 +139,31 @@
                 <!-- End address Section -->
 
                 <!-- Start product Section -->
-                <tr>
+                <tr th:each="item : ${items}">
                     <td style="padding-top: 0;">
                         <table align="center" border="0" cellpadding="0" cellspacing="0" class="devicewidthinner"
                                style="border-bottom: 1px solid #eeeeee;" width="560">
                             <tbody>
                             <tr>
                                 <td rowspan="4" style="padding-right: 10px; padding-bottom: 10px;">
-                                    <img alt="Product Image" src="images/product-1.jpg" style="height: 80px;"/>
+                                    <img alt="Product Image" style="height: 80px;"
+                                         th:src="${item.thumbUrl}"/>
                                 </td>
                                 <td colspan="2"
-                                    style="font-size: 14px; font-weight: bold; color: #666666; padding-bottom: 5px;">
-                                    Lorem ipsum dolor sit amet
+                                    style="font-size: 14px; font-weight: bold; color: #666666; padding-bottom: 5px;"
+                                    th:text="${item.name}">
+                                    <!-- Product Name -->
                                 </td>
                             </tr>
                             <tr>
-                                <td style="font-size: 14px; line-height: 18px; color: #757575; width: 440px;">
-                                    Quantity: 100
+                                <td style="font-size: 14px; line-height: 18px; color: #757575; width: 440px;"
+                                    th:text="'Quantity: ' + ${item.quantity}">
+                                    <!-- Quantity -->
                                 </td>
-                                <td style="width: 130px;"></td>
-                            </tr>
-                            <tr>
-                                <td style="font-size: 14px; line-height: 18px; color: #757575;">
-                                    Color: White & Blue
-                                </td>
-                                <td style="font-size: 14px; line-height: 18px; color: #757575; text-align: right;">
-                                    $1.23 Per Unit
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-size: 14px; line-height: 18px; color: #757575; padding-bottom: 10px;">
-                                    Size: XL
-                                </td>
+                                <td style="width: 120px;"></td>
                                 <td style="font-size: 14px; line-height: 18px; color: #757575; text-align: right; padding-bottom: 10px;">
-                                    <b style="color: #666666;">$1,234.50</b> Total
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding-top: 0;">
-                        <table align="center" border="0" cellpadding="0" cellspacing="0" class="devicewidthinner"
-                               style="border-bottom: 1px solid #eeeeee;" width="560">
-                            <tbody>
-                            <tr>
-                                <td rowspan="4" style="padding-right: 10px; padding-bottom: 10px;">
-                                    <img alt="Product Image" src="images/product-2.jpg" style="height: 80px;"/>
-                                </td>
-                                <td colspan="2"
-                                    style="font-size: 14px; font-weight: bold; color: #666666; padding-bottom: 5px;">
-                                    Aliquam posuere ultrices mi ut rutrum
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-size: 14px; line-height: 18px; color: #757575; width: 440px;">
-                                    Quantity: 100
-                                </td>
-                                <td style="width: 130px;"></td>
-                            </tr>
-                            <tr>
-                                <td style="font-size: 14px; line-height: 18px; color: #757575;">
-                                    Color: White & Blue
-                                </td>
-                                <td style="font-size: 14px; line-height: 18px; color: #757575; text-align: right;">
-                                    $1.23 Per Unit
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-size: 14px; line-height: 18px; color: #757575; padding-bottom: 10px;">
-                                    Size: XL
-                                </td>
-                                <td style="font-size: 14px; line-height: 18px; color: #757575; text-align: right; padding-bottom: 10px;">
-                                    <b style="color: #666666;">$1,234.50</b> Total
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding-top: 0;">
-                        <table align="center" border="0" cellpadding="0" cellspacing="0" class="devicewidthinner"
-                               style="border-bottom: 1px solid #eeeeee;" width="560">
-                            <tbody>
-                            <tr>
-                                <td rowspan="4" style="padding-right: 10px; padding-bottom: 10px;">
-                                    <img alt="Product Image" src="images/product-3.jpg" style="height: 80px;"/>
-                                </td>
-                                <td colspan="2"
-                                    style="font-size: 14px; font-weight: bold; color: #666666; padding-bottom: 5px;">
-                                    Phasellus vitae pharetra arcu
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-size: 14px; line-height: 18px; color: #757575; width: 440px;">
-                                    Quantity: 100
-                                </td>
-                                <td style="width: 130px;"></td>
-                            </tr>
-                            <tr>
-                                <td style="font-size: 14px; line-height: 18px; color: #757575;">
-                                    Color: White & Blue
-                                </td>
-                                <td style="font-size: 14px; line-height: 18px; color: #757575; text-align: right;">
-                                    $1.23 Per Unit
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-size: 14px; line-height: 18px; color: #757575; padding-bottom: 10px;">
-                                    Size: XL
-                                </td>
-                                <td style="font-size: 14px; line-height: 18px; color: #757575; text-align: right; padding-bottom: 10px;">
-                                    <b style="color: #666666;">$1,234.50</b> Total
+                                    <b style="color: #666666;" th:text="'R$' + ${item.price}"> <!-- Product Price -->
+                                    </b>
                                 </td>
                             </tr>
                             </tbody>
@@ -269,43 +180,27 @@
                             <tbody>
                             <tr>
                                 <td rowspan="5" style="width: 55%;"></td>
-                                <td style="font-size: 14px; line-height: 18px; color: #666666;">
-                                    Sub-Total:
-                                </td>
-                                <td style="font-size: 14px; line-height: 18px; color: #666666; width: 130px; text-align: right;">
-                                    $1,234.50
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 10px; border-bottom: 1px solid #eeeeee;">
-                                    Shipping Fee:
-                                </td>
-                                <td style="font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 10px; border-bottom: 1px solid #eeeeee; text-align: right;">
-                                    $10.20
-                                </td>
+                                <!--                                <td style="font-size: 14px; line-height: 18px; color: #666666;">-->
+                                <!--                                    Sub-Total:-->
+                                <!--                                </td>-->
+                                <!--                                <td style="font-size: 14px; line-height: 18px; color: #666666; width: 130px; text-align: right;">-->
+                                <!--                                    $1,234.50-->
+                                <!--                                </td>-->
+                                <!--                            </tr>-->
+                                <!--                            <tr>-->
+                                <!--                                <td style="font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 10px; border-bottom: 1px solid #eeeeee;">-->
+                                <!--                                    Shipping Fee:-->
+                                <!--                                </td>-->
+                                <!--                                <td style="font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 10px; border-bottom: 1px solid #eeeeee; text-align: right;">-->
+                                <!--                                    $10.20-->
+                                <!--                                                            </td>-->
                             </tr>
                             <tr>
                                 <td style="font-size: 14px; font-weight: bold; line-height: 18px; color: #666666; padding-top: 10px;">
                                     Order Total
                                 </td>
-                                <td style="font-size: 14px; font-weight: bold; line-height: 18px; color: #666666; padding-top: 10px; text-align: right;">
-                                    $1,234.50
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-size: 14px; font-weight: bold; line-height: 18px; color: #666666;">
-                                    Payment Term:
-                                </td>
-                                <td style="font-size: 14px; font-weight: bold; line-height: 18px; color: #666666; text-align: right;">
-                                    100%
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-size: 14px; font-weight: bold; line-height: 18px; color: #666666; padding-bottom: 10px;">
-                                    Deposit Amount
-                                </td>
-                                <td style="font-size: 14px; font-weight: bold; line-height: 18px; color: #666666; text-align: right; padding-bottom: 10px;">
-                                    $1,234.50
+                                <td style="font-size: 14px; font-weight: bold; line-height: 18px; color: #666666; padding-top: 10px; text-align: right;"
+                                    th:text="'R$ ' + ${total}">
                                 </td>
                             </tr>
                             </tbody>

@@ -88,6 +88,15 @@ public class Order {
 		this.payment = payment;
 	}
 
+	public double getTotal() {
+		// multiply quantity by price & sum
+		double sum = 0.0;
+		for (OrderItem x : items) {
+			sum += x.getSubTotal();
+		}
+		return sum;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

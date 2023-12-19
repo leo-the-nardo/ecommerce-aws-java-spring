@@ -89,7 +89,4 @@ public class ConfirmationToken {
 		this.user = user;
 	}
 
-	public User getAppUser() {
-		return user;
-	}
 }
