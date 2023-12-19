@@ -27,21 +27,18 @@ public class EmailService implements EmailProvider {
 		this.mailSender = mailSender;
 	}
 
-	public void sendOrderConfirmationEmail(Long orderId) {
-		System.out.println("Sending email to order " + orderId);
-	}
 
 	@Override
 	@Async
-	public void send(String to, String email) {
+	public void send(String to, String as, String title, String content) {
 		try {
 			MimeMessage mimeMessage = mailSender.createMimeMessage();
 			MimeMessageHelper helper =
 							new MimeMessageHelper(mimeMessage, "utf-8");
-			helper.setText(email, true);
+			helper.setText(content, true);
 			helper.setTo(to);
-			helper.setSubject("Confirm your email");
-			helper.setFrom(from, "User Registration Portal Service");
+			helper.setSubject(title);
+			helper.setFrom(from, as);
 			mailSender.send(mimeMessage);
 
 		} catch (MessagingException e) {

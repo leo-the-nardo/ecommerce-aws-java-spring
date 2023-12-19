@@ -2,6 +2,7 @@ package com.leothenardo.ecommerce.controllers;
 
 import com.leothenardo.ecommerce.dtos.PaymentUrlRequestDTO;
 import com.leothenardo.ecommerce.dtos.PaymentUrlResponseDTO;
+import com.leothenardo.ecommerce.dtos.webhooks.AsaasPayWebhook;
 import com.leothenardo.ecommerce.services.PaymentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,5 +30,13 @@ public class PaymentController {
 		String url = paymentService.generateUrl(bodyDTO);
 		URI uri = URI.create(url);
 		return ResponseEntity.created(uri).body(new PaymentUrlResponseDTO(url));
+	}
+
+	@PostMapping(value = "/asaas/webhook")
+	public ResponseEntity<Void> asaasWebhook(
+					@RequestBody AsaasPayWebhook body
+	) {
+		paymentService.handleAsaasWebhook(body);
+		return ResponseEntity.ok().build();
 	}
 }

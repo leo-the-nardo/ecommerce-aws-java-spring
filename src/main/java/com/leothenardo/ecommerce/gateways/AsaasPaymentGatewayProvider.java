@@ -26,7 +26,12 @@ public class AsaasPaymentGatewayProvider implements PaymentGatewayProvider {
 	public AsaasPaymentGatewayProvider(PaymentGatewayProperties gatewayProperties, AsaasCustomerRepository asaasCustomerRepository, WebClient.Builder webClientBuilder) {
 		this.gatewayProperties = gatewayProperties;
 		this.asaasCustomerRepository = asaasCustomerRepository;
-		this.webClient = webClientBuilder.baseUrl(gatewayProperties.getAsaas().getApiUrl()).build();
+		this.webClient = webClientBuilder
+						.baseUrl(gatewayProperties.getAsaas().getApiUrl())
+						.defaultHeader("Content-Type", "application/json")
+						.defaultHeader("Accept", "application/json")
+						.defaultHeader("access_token", gatewayProperties.getAsaas().getApiKey())
+						.build();
 	}
 
 	@Override
@@ -44,7 +49,6 @@ public class AsaasPaymentGatewayProvider implements PaymentGatewayProvider {
 			PostPaymentResponse responseBody = webClient
 							.post()
 							.uri("/payments")
-							.header("access_token", gatewayProperties.getAsaas().getApiKey())
 							.bodyValue(body)
 							.retrieve()
 							.bodyToMono(PostPaymentResponse.class)
@@ -71,7 +75,6 @@ public class AsaasPaymentGatewayProvider implements PaymentGatewayProvider {
 			FetchCustomersResponse response = webClient
 							.get()
 							.uri(url)
-							.header("access_token", gatewayProperties.getAsaas().getApiKey())
 							.retrieve()
 							.bodyToMono(FetchCustomersResponse.class)
 							.block();
@@ -96,7 +99,6 @@ public class AsaasPaymentGatewayProvider implements PaymentGatewayProvider {
 			PostCustomerResponse responseBody = webClient
 							.post()
 							.uri("/customers")
-							.header("access_token", gatewayProperties.getAsaas().getApiKey())
 							.bodyValue(body)
 							.retrieve()
 							.bodyToMono(PostCustomerResponse.class)

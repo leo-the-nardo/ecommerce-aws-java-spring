@@ -17,6 +17,12 @@ public class Payment {
 	//	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant moment;
 
+	private BillingType billingType;
+
+	private double value;
+
+	private double netValue;
+
 	@OneToOne
 	@MapsId
 	private Order order;
@@ -28,6 +34,15 @@ public class Payment {
 		this.id = id;
 		this.moment = moment;
 		this.order = order;
+	}
+
+
+	public Payment(Order order, BillingType billingType, double value, double netValue) {
+		this.moment = Instant.now();
+		this.order = order;
+		this.billingType = billingType;
+		this.value = value;
+		this.netValue = netValue;
 	}
 
 	public Long getId() {

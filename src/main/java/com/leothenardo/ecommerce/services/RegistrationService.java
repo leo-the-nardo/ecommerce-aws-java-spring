@@ -109,7 +109,10 @@ public class RegistrationService {
 			String link = appUrl + "/confirm?token=" + newToken;
 			String to = confirmationToken.getAppUser().getEmail();
 			String content = buildEmail(confirmationToken.getAppUser().getName(), link);
-			emailSender.send(to, content);
+			emailSender.send(to,
+							"Registration Portal Service",
+							"Confirm your email",
+							content);
 			return "Sent new confirmation email";
 		}
 
@@ -136,7 +139,12 @@ public class RegistrationService {
 
 		String token = UUID.randomUUID().toString();
 		String link = appUrl + "/confirm?token=" + token;
-		emailSender.send(newUser.getEmail(), buildEmail(newUser.getName(), link));  //TODO: be resilient to email errors
+		String content = buildEmail(newUser.getName(), link);
+		emailSender.send(
+						newUser.getEmail(),
+						"Registration Portal Service",
+						"Confirm your email",
+						content);  //TODO: be resilient to email errors
 
 		userRepository.save(newUser);
 

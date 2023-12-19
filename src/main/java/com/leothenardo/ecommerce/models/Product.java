@@ -18,6 +18,7 @@ public class Product {
 	private String description;
 	private Double price;
 	private String thumbPath;
+	private Long stock;
 
 	private Instant deletedAt;
 
@@ -131,6 +132,14 @@ public class Product {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
+	
+	public Long getStock() {
+		return stock;
+	}
+
+	public void setStock(Long stock) {
+		this.stock = stock;
+	}
 
 	public List<FileReference> getImages() {
 		return images;
@@ -153,4 +162,5 @@ public class Product {
 	public void delete() {
 		this.deletedAt = Instant.now();
 	}
+
 }

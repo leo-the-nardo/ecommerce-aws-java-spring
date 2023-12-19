@@ -12,6 +12,7 @@
 - Spring Data JPA
 - WebFlux
 - SMTP
+- Thymeleaf
 - Localstack
 - Junit
 - Mockito
