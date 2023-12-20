@@ -3,23 +3,29 @@ package com.leothenardo.ecommerce.models;
 import jakarta.persistence.*;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class AsaasCustomer {
 	@Id
 	private String id;
-	@JoinColumn(name = "user_id")
+
+	@JoinColumn(name = "customer_details_id")
 	@ManyToOne(fetch = FetchType.LAZY)
-	private User user;
+	private CustomerDetails customerDetails;
+
+
+	@OneToMany(mappedBy = "asaasCustomer")
+	private Set<AsaasTokenCard> cards;
 
 	public AsaasCustomer() {
 	}
 
-	public AsaasCustomer(String id, User user) {
+	public AsaasCustomer(String id, CustomerDetails customerDetails) {
 		Objects.requireNonNull(id);
-		Objects.requireNonNull(user);
+		Objects.requireNonNull(customerDetails);
 		this.id = id;
-		this.user = user;
+		this.customerDetails = customerDetails;
 	}
 
 	public String getId() {
@@ -30,7 +36,7 @@ public class AsaasCustomer {
 		this.id = id;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setCustomerDetails(CustomerDetails customerDetails) {
+		this.customerDetails = customerDetails;
 	}
 }

@@ -10,6 +10,7 @@ public record UserDTO(
 				Long id,
 				String name,
 				String email,
+				String cpf,
 				String phone,
 				LocalDate birthDate,
 				List<String> roles) {
@@ -21,6 +22,7 @@ public record UserDTO(
 						user.getId(),
 						user.getName(),
 						user.getEmail(),
+						user.getCpf(),
 						user.getPhone(),
 						user.getBirthDate(),
 						roles);

@@ -1,19 +1,23 @@
 package com.leothenardo.ecommerce.gateways;
 
-import com.leothenardo.ecommerce.models.User;
+import com.leothenardo.ecommerce.dtos.UserDTO;
+import com.leothenardo.ecommerce.gateways.models.asaas.PostTokenizeCardRequest;
 
 import java.util.Optional;
 
-public interface PaymentGatewayProvider {
+public sealed interface PaymentGatewayProvider permits AsaasPaymentGatewayProvider {
 
-	void persistCustomer(String gatewayCustomerId, User me);
+	void persistCustomer(String gatewayCustomerId, UserDTO me);
 
 	String generatePaymentUrl(String gatewayCustomerId, double total, Long domainOrderId);
 
 	Optional<String> getGatewayCustomerIdByDb(Long domainUserId);
 
-	Optional<String> getGatewayCustomerIdByHttp(User user);
+	Optional<String> getGatewayCustomerIdByHttp(UserDTO user);
 
-	String createCustomer(User me);
+	String createCustomer(UserDTO me);
+
+	String tokenizeCard(PostTokenizeCardRequest requestBody, String customerId, Long userId);
+
 
 }

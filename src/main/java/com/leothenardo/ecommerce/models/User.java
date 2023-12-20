@@ -31,6 +31,9 @@ public class User implements UserDetails {
 					joinColumns = @JoinColumn(name = "user_id"),
 					inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
+	
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private CustomerDetails customerDetails;
 
 	public User() {
 	}
@@ -53,6 +56,14 @@ public class User implements UserDetails {
 		this.password = password;
 		this.cpf = cpf;
 		this.orders = orders;
+	}
+
+	public CustomerDetails getCustomerDetails() {
+		return customerDetails;
+	}
+
+	public void setCustomerDetails(CustomerDetails customerDetails) {
+		this.customerDetails = customerDetails;
 	}
 
 	public Long getId() {

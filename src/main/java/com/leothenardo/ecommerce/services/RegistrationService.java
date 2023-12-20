@@ -3,6 +3,7 @@ package com.leothenardo.ecommerce.services;
 import com.leothenardo.ecommerce.dtos.RegisterUserInputDTO;
 import com.leothenardo.ecommerce.gateways.EmailProvider;
 import com.leothenardo.ecommerce.models.ConfirmationToken;
+import com.leothenardo.ecommerce.models.CustomerDetails;
 import com.leothenardo.ecommerce.models.Role;
 import com.leothenardo.ecommerce.models.User;
 import com.leothenardo.ecommerce.repositories.UserRepository;
@@ -10,7 +11,6 @@ import com.leothenardo.ecommerce.services.exceptions.AlreadyExists;
 import com.leothenardo.ecommerce.services.exceptions.ExpiredException;
 import com.leothenardo.ecommerce.services.exceptions.ResourceNotFoundException;
 import com.leothenardo.ecommerce.validation.EmailValidator;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +30,7 @@ public class RegistrationService {
 	private final EmailProvider emailSender;
 	private final PasswordEncoder passwordEncoder;
 
+
 	public RegistrationService(UserRepository userRepository, UserService userService, EmailValidator emailValidator, ConfirmationTokenService confirmationTokenService, EmailProvider emailSender, PasswordEncoder passwordEncoder) {
 		this.userRepository = userRepository;
 		this.userService = userService;
@@ -40,6 +41,7 @@ public class RegistrationService {
 	}
 
 
+	@Transactional
 	public String register(RegisterUserInputDTO registerDTO, String appUrl) {
 		boolean isValidEmail = emailValidator.
 						test(registerDTO.email());
@@ -47,16 +49,16 @@ public class RegistrationService {
 		if (!isValidEmail) {
 			throw new IllegalStateException("email not valid");
 		}
-
+		User user = new User(
+						registerDTO.name(),
+						registerDTO.email(),
+						registerDTO.phone(),
+						registerDTO.cpf(),
+						LocalDate.of(2000, 1, 1),
+						registerDTO.password()
+		);
 		String token = this.signUpUser(
-						new User(
-										registerDTO.name(),
-										registerDTO.email(),
-										registerDTO.phone(),
-										registerDTO.cpf(),
-										LocalDate.of(2000, 1, 1),
-										registerDTO.password()
-						), appUrl
+						user, appUrl
 		);
 
 		return token;
@@ -116,6 +118,7 @@ public class RegistrationService {
 	}
 
 
+	@Transactional
 	public String signUpUser(User newUser, String appUrl) {
 		boolean userExists = userRepository
 						.findByEmail(newUser.getEmail())
@@ -132,6 +135,9 @@ public class RegistrationService {
 		newUser.setPassword(encodedPassword);
 		Role defaultRole = new Role(DEFAULT_ROLE_ID, "ROLE_CLIENT"); //TODO: think about this
 		newUser.getRoles().add(defaultRole);
+		CustomerDetails customerDetails = new CustomerDetails();
+		customerDetails.setUser(newUser);
+		newUser.setCustomerDetails(customerDetails);
 
 		String token = UUID.randomUUID().toString();
 		String link = appUrl + "/confirm?token=" + token;

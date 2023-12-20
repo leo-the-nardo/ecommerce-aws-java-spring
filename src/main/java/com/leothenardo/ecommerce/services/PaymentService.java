@@ -1,8 +1,10 @@
 package com.leothenardo.ecommerce.services;
 
 
+import com.leothenardo.ecommerce.dtos.UserDTO;
 import com.leothenardo.ecommerce.dtos.OrderDTO;
 import com.leothenardo.ecommerce.dtos.PaymentUrlRequestDTO;
+import com.leothenardo.ecommerce.dtos.sensitive.TokenizeCardRequestDTO;
 import com.leothenardo.ecommerce.dtos.mail.ConfirmationOrderMailInput;
 import com.leothenardo.ecommerce.dtos.webhooks.AsaasPayWebhook;
 import com.leothenardo.ecommerce.gateways.EmailProvider;
@@ -39,18 +41,11 @@ public class PaymentService {
 
 	@Transactional
 	public String generateUrl(PaymentUrlRequestDTO input) {
-		User me = userService.authenticated();
-		Optional<String> gatewayCustomerId = getGatewayCustomerId(me);
-
-		if (gatewayCustomerId.isEmpty()) {
-			String createdGatewayCustomerId = paymentGateway.createCustomer(me);
-			gatewayCustomerId = Optional.of(createdGatewayCustomerId);
-			log.info("Created Gateway Customer ID: " + createdGatewayCustomerId);
-		}
+		String gatewayCustomerId = getMyGatewayCustomerId();
 		OrderDTO order = orderService.internalGet(input.orderId());
 
 		return paymentGateway.generatePaymentUrl(
-						gatewayCustomerId.get(),
+						gatewayCustomerId,
 						order.total(),
 						order.id()
 		);
@@ -115,23 +110,47 @@ public class PaymentService {
 		return "processing payment email";
 	}
 
-	private Optional<String> getGatewayCustomerId(User user) {
-		Optional<String> gatewayCustomerId = paymentGateway.getGatewayCustomerIdByDb(user.getId());
+	@Transactional()
+	protected String getMyGatewayCustomerId() {
+		UserDTO me = userService.getMe();
+		Optional<String> gatewayCustomerId = paymentGateway.getGatewayCustomerIdByDb(me.id());
 
 		if (gatewayCustomerId.isEmpty()) {
 			log.info("Searching customer ID by HTTP API");
-			gatewayCustomerId = paymentGateway.getGatewayCustomerIdByHttp(user);
+			gatewayCustomerId = paymentGateway.getGatewayCustomerIdByHttp(me);
 
-			if (gatewayCustomerId.isPresent()) {
-				log.info("Persisting found customer ID by HTTP API: " + gatewayCustomerId.get());
-				paymentGateway.persistCustomer(gatewayCustomerId.get(), user);
+			if (gatewayCustomerId.isEmpty()) {
+				String createdGatewayCustomerId = paymentGateway.createCustomer(me);
+				gatewayCustomerId = Optional.of(createdGatewayCustomerId);
+				log.info("Created Gateway Customer ID: " + createdGatewayCustomerId);
 			}
 		} else {
 			log.info("Customer ID found in DB");
 		}
 
-		return gatewayCustomerId;
+		return gatewayCustomerId.get();
 	}
+
+	@Transactional()
+	protected String getMyGatewayCustomerId(UserDTO me) {
+		Optional<String> gatewayCustomerId = paymentGateway.getGatewayCustomerIdByDb(me.id());
+
+		if (gatewayCustomerId.isEmpty()) {
+			log.info("Searching customer ID by HTTP API");
+			gatewayCustomerId = paymentGateway.getGatewayCustomerIdByHttp(me);
+
+			if (gatewayCustomerId.isEmpty()) {
+				String createdGatewayCustomerId = paymentGateway.createCustomer(me);
+				gatewayCustomerId = Optional.of(createdGatewayCustomerId);
+				log.info("Created Gateway Customer ID: " + createdGatewayCustomerId);
+			}
+		} else {
+			log.info("Customer ID found in DB");
+		}
+
+		return gatewayCustomerId.get();
+	}
+
 
 	@Transactional
 	protected void handlePaymentConfirmed(AsaasPayWebhook webhook) {
@@ -170,6 +189,14 @@ public class PaymentService {
 		);
 		emailProvider.sendOrderConfirmationEmail(mailDetails);
 		notificationService.notifyListeners(webhook);
+
+	}
+
+	@Transactional
+	public Object tokenizeCard(TokenizeCardRequestDTO bodyDTO) {
+		UserDTO me = userService.getMe();
+		String gatewayCustomerId = getMyGatewayCustomerId(me);
+		return bodyDTO.tokenizeWith(paymentGateway, gatewayCustomerId, me.id());
 
 	}
 

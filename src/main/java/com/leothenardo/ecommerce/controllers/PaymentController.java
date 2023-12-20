@@ -2,6 +2,7 @@ package com.leothenardo.ecommerce.controllers;
 
 import com.leothenardo.ecommerce.dtos.PaymentUrlRequestDTO;
 import com.leothenardo.ecommerce.dtos.PaymentUrlResponseDTO;
+import com.leothenardo.ecommerce.dtos.sensitive.TokenizeCardRequestDTO;
 import com.leothenardo.ecommerce.dtos.webhooks.AsaasPayWebhook;
 import com.leothenardo.ecommerce.services.PaymentService;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +35,18 @@ public class PaymentController {
 
 	@PostMapping(value = "/asaas/webhook")
 	public ResponseEntity<Void> asaasWebhook(
-					@RequestBody AsaasPayWebhook body
+					@RequestBody AsaasPayWebhook bodyDTO
 	) {
-		paymentService.handleAsaasWebhook(body);
+		paymentService.handleAsaasWebhook(bodyDTO);
+		return ResponseEntity.ok().build();
+	}
+
+	@PreAuthorize("hasAnyRole('ROLE_CLIENT','ROLE_ADMIN')")
+	@PostMapping(value = "/asaas/tokenize")
+	public ResponseEntity<Void> tokenizeCard(
+					@RequestBody TokenizeCardRequestDTO bodyDTO
+	) {
+		paymentService.tokenizeCard(bodyDTO);
 		return ResponseEntity.ok().build();
 	}
 }
