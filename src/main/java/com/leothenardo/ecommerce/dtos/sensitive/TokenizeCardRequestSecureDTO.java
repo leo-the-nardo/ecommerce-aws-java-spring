@@ -3,19 +3,18 @@ package com.leothenardo.ecommerce.dtos.sensitive;
 import com.leothenardo.ecommerce.gateways.PaymentGatewayProvider;
 import com.leothenardo.ecommerce.gateways.models.asaas.PostTokenizeCardRequest;
 
-public final class TokenizeCardRequestDTO {
+public final class TokenizeCardRequestSecureDTO {
 	private CreditCard creditCard;
 	private CreditCardHolderInfo creditCardHolderInfo;
 	private String remoteIp;
 
-	public TokenizeCardRequestDTO(CreditCard creditCard, CreditCardHolderInfo creditCardHolderInfo, String remoteIp) {
+	public TokenizeCardRequestSecureDTO(CreditCard creditCard, CreditCardHolderInfo creditCardHolderInfo, String remoteIp) {
 		this.creditCard = creditCard;
 		this.creditCardHolderInfo = creditCardHolderInfo;
 		this.remoteIp = remoteIp;
 	}
 
 	public Object tokenizeWith(PaymentGatewayProvider gatewayProvider, String customerGatewayId, Long userId) {
-		System.out.println("TokenizeCardRequestDTO.tokenizeWith");
 		var creditCard = new PostTokenizeCardRequest.CreditCard.Builder()
 						.withHolderName(this.creditCard.holderName)
 						.withNumber(this.creditCard.number)

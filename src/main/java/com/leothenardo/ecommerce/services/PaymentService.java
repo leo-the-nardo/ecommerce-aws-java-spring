@@ -4,7 +4,8 @@ package com.leothenardo.ecommerce.services;
 import com.leothenardo.ecommerce.dtos.UserDTO;
 import com.leothenardo.ecommerce.dtos.OrderDTO;
 import com.leothenardo.ecommerce.dtos.PaymentUrlRequestDTO;
-import com.leothenardo.ecommerce.dtos.sensitive.TokenizeCardRequestDTO;
+import com.leothenardo.ecommerce.dtos.sensitive.ProcessCheckoutSecureDTO;
+import com.leothenardo.ecommerce.dtos.sensitive.TokenizeCardRequestSecureDTO;
 import com.leothenardo.ecommerce.dtos.mail.ConfirmationOrderMailInput;
 import com.leothenardo.ecommerce.dtos.webhooks.AsaasPayWebhook;
 import com.leothenardo.ecommerce.gateways.EmailProvider;
@@ -193,11 +194,20 @@ public class PaymentService {
 	}
 
 	@Transactional
-	public Object tokenizeCard(TokenizeCardRequestDTO bodyDTO) {
+	public Object tokenizeCard(TokenizeCardRequestSecureDTO bodyDTO) {
 		UserDTO me = userService.getMe();
 		String gatewayCustomerId = getMyGatewayCustomerId(me);
 		return bodyDTO.tokenizeWith(paymentGateway, gatewayCustomerId, me.id());
 
 	}
 
+	@Transactional
+	public boolean processCheckout(ProcessCheckoutSecureDTO bodyDTO) {
+		UserDTO me = userService.getMe();
+		OrderDTO order = orderService.internalGet(bodyDTO.getDomainOrderId());
+		log.info("Processing checkout for order: " + order.id());
+		boolean success = bodyDTO.processWith(paymentGateway, me, order);
+		return success;
+
+	}
 }

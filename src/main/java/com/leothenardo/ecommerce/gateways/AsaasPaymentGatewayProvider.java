@@ -1,8 +1,10 @@
 package com.leothenardo.ecommerce.gateways;
 
 import com.leothenardo.ecommerce.config.PaymentGatewayProperties;
+import com.leothenardo.ecommerce.dtos.OrderDTO;
 import com.leothenardo.ecommerce.dtos.UserDTO;
 import com.leothenardo.ecommerce.gateways.models.asaas.*;
+import com.leothenardo.ecommerce.gateways.models.asaas.builders.PostCreditCardPaymentRequestBuilder;
 import com.leothenardo.ecommerce.models.AsaasCustomer;
 import com.leothenardo.ecommerce.models.AsaasTokenCard;
 import com.leothenardo.ecommerce.models.CustomerDetails;
@@ -102,6 +104,27 @@ public non-sealed class AsaasPaymentGatewayProvider implements PaymentGatewayPro
 		}
 	}
 
+	@Override
+	@Transactional
+	public String getGatewayCustomerId(UserDTO me) {
+		Optional<String> gatewayCustomerId = getGatewayCustomerIdByDb(me.id());
+
+		if (gatewayCustomerId.isEmpty()) {
+			log.info("Searching customer ID by HTTP API");
+			gatewayCustomerId = getGatewayCustomerIdByHttp(me);
+
+			if (gatewayCustomerId.isEmpty()) {
+				String createdGatewayCustomerId = createCustomer(me);
+				gatewayCustomerId = Optional.of(createdGatewayCustomerId);
+				log.info("Created Gateway Customer ID: " + createdGatewayCustomerId);
+			}
+		} else {
+			log.info("Customer ID found in DB");
+		}
+
+		return gatewayCustomerId.get();
+	}
+
 	@Transactional
 	@Override
 	public String createCustomer(UserDTO me) {
@@ -155,6 +178,91 @@ public non-sealed class AsaasPaymentGatewayProvider implements PaymentGatewayPro
 		} catch (WebClientResponseException e) {
 			log.error("Error on request to Asaas API: {}", e.getMessage());
 			throw new PaymentGatewayException(e.getResponseBodyAsString());
+		}
+	}
+
+	@Override
+	@Transactional
+	public String persistTokenizedCard(Long userId, String asaasCustomerId, CreditCardDTO creditCardDTO) {
+		CustomerDetails customerDetails = customerDetailsRepository.getReferenceById(userId);
+		AsaasCustomer asaasCustomer = asaasCustomerRepository.getReferenceById(asaasCustomerId);
+
+		AsaasTokenCard asaasTokenCard = new AsaasTokenCard(
+						creditCardDTO.lastFourDigits(),
+						creditCardDTO.creditCardBrand(),
+						creditCardDTO.token(),
+						customerDetails,
+						asaasCustomer
+		);
+		customerDetails.getAsaasTokenCard().add(asaasTokenCard);
+		customerDetailsRepository.save(customerDetails);
+		return asaasTokenCard.getId();
+	}
+
+
+	@Override
+	@Transactional(readOnly = true)
+	public boolean processCheckout(Long userId, OrderDTO order, String cardTokenId) {
+		CustomerDetails customerDetails = customerDetailsRepository.getReferenceById(userId);
+		AsaasTokenCard asaasTokenCard = customerDetails.getAsaasTokenCard().stream().filter(
+						asaasToken -> asaasToken.getId().equals(cardTokenId)
+		).findFirst().orElseThrow();
+		AsaasCustomer asaasCustomer = asaasTokenCard.getAsaasCustomer();
+
+		PostCreditCardPaymentRequest requestBody = new PostCreditCardPaymentRequestBuilder()
+						.customer(asaasCustomer.getId())
+						.billingType("CREDIT_CARD")
+						.creditCardToken(asaasTokenCard.getCreditCardToken())
+						.externalReference(order.id().toString())
+						.dueDate("2025-12-31")
+						.description("Pedido #" + order.id())
+						.value(order.total())
+						.build();
+		System.out.println(requestBody.toString());
+		try {
+			PostCreditCardPaymentResponse responseBody = webClient
+							.post()
+							.uri("/payments")
+							.bodyValue(requestBody)
+							.retrieve()
+							.bodyToMono(PostCreditCardPaymentResponse.class)
+							.block();
+			System.out.println(responseBody);
+			return true;
+
+		} catch (WebClientResponseException e) {
+			log.error("Error on process payment on Asaas API: {}", e.getResponseBodyAsString());
+			return false;
+		}
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public boolean processCheckout(PostCreditCardPaymentRequest requestBody, UserDTO user) {
+		String gatewayCustomerId = getGatewayCustomerId(user);
+		requestBody.setCustomer(gatewayCustomerId);
+
+		try {
+			PostCreditCardPaymentResponse responseBody = webClient
+							.post()
+							.uri("/payments")
+							.bodyValue(requestBody)
+							.retrieve()
+							.bodyToMono(PostCreditCardPaymentResponse.class)
+							.block();
+			var creditCard = new CreditCardDTO(
+							responseBody.getCreditCard().getCreditCardNumber(),
+							responseBody.getCreditCard().getCreditCardBrand(),
+							responseBody.getCreditCard().getCreditCardToken()
+			);
+			System.out.println("Persisting returned tokenized card from Asaas");
+			persistTokenizedCard(user.id(), gatewayCustomerId, creditCard);
+
+			return true;
+
+		} catch (WebClientResponseException e) {
+			log.error("Error on process payment on Asaas API: {}", e.getResponseBodyAsString());
+			return false;
 		}
 	}
 

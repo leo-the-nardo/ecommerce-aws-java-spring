@@ -20,4 +20,5 @@
 - Ansible
 - Jenkins
 - Docker
+- Prometheus
 

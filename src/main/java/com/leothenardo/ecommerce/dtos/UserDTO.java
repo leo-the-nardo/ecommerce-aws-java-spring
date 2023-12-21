@@ -18,6 +18,7 @@ public record UserDTO(
 	public static UserDTO from(User user) {
 		List<String> roles = new ArrayList<>();
 		user.getRoles().forEach(role -> roles.add(role.getAuthority()));
+		System.out.println("UserDTO returned-------");
 		return new UserDTO(
 						user.getId(),
 						user.getName(),

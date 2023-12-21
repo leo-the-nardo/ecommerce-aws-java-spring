@@ -60,7 +60,6 @@ public class PostTokenizeCardRequest {
 		private String remoteIp;
 
 		public Builder() {
-			// Construtor padrão vazio
 		}
 
 		public Builder withCustomer(String customer) {
@@ -148,13 +147,7 @@ public class PostTokenizeCardRequest {
 
 		@Override
 		public String toString() {
-			return "CreditCard{" +
-							"holderName='" + holderName + '\'' +
-							", number='" + number + '\'' +
-							", expiryMonth='" + expiryMonth + '\'' +
-							", expiryYear='" + expiryYear + '\'' +
-							", ccv='" + ccv + '\'' +
-							'}';
+			return "";
 		}
 
 		public static class Builder {
