@@ -3,6 +3,7 @@ package com.leothenardo.ecommerce.gateways;
 import com.leothenardo.ecommerce.dtos.OrderDTO;
 import com.leothenardo.ecommerce.dtos.UserDTO;
 import com.leothenardo.ecommerce.gateways.models.asaas.CreditCardDTO;
+import com.leothenardo.ecommerce.gateways.models.asaas.GetPaymentPixQRCodeResponse;
 import com.leothenardo.ecommerce.gateways.models.asaas.PostCreditCardPaymentRequest;
 import com.leothenardo.ecommerce.gateways.models.asaas.PostTokenizeCardRequest;
 
@@ -30,4 +31,5 @@ public sealed interface PaymentGatewayProvider permits AsaasPaymentGatewayProvid
 
 	String persistTokenizedCard(Long userId, String asaasCustomerId, CreditCardDTO creditCardDTO);
 
+	GetPaymentPixQRCodeResponse generatePixDetails(UserDTO user, OrderDTO order);
 }

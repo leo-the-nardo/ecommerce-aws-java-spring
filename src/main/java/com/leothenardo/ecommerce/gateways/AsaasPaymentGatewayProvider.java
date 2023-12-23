@@ -199,6 +199,44 @@ public non-sealed class AsaasPaymentGatewayProvider implements PaymentGatewayPro
 		return asaasTokenCard.getId();
 	}
 
+	@Override
+	@Transactional
+	public GetPaymentPixQRCodeResponse generatePixDetails(UserDTO user, OrderDTO order) {
+		try {
+			String gatewayCustomerId = getGatewayCustomerId(user);
+			var body = new PostPaymentRequest.Builder()
+							.withCustomer(gatewayCustomerId)
+							.withDueDate("2025-07-07")
+							.withValue(order.total())
+							.withDescription("Pedido #" + order.id().toString())
+							.withExternalReference(order.id().toString())
+							.withBillingType("PIX")
+							.build();
+			log.info("creating payment");
+			PostPaymentResponse responseBody = webClient
+							.post()
+							.uri("/payments")
+							.bodyValue(body)
+							.retrieve()
+							.bodyToMono(PostPaymentResponse.class)
+							.block();
+			String id = responseBody.getId();
+			log.info("retrieving QR code");
+			GetPaymentPixQRCodeResponse qrCodeResponse = webClient
+							.get()
+							.uri("/payments/" + id + "/pixQrCode")
+							.retrieve()
+							.bodyToMono(GetPaymentPixQRCodeResponse.class)
+							.block();
+			log.info("returning QR code");
+			return qrCodeResponse;
+
+		} catch (WebClientResponseException e) {
+			System.out.println(e.getResponseBodyAsString());
+			throw new PaymentGatewayException(e.getResponseBodyAsString());
+		}
+	}
+
 
 	@Override
 	@Transactional(readOnly = true)

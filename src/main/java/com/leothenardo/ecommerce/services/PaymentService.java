@@ -1,6 +1,7 @@
 package com.leothenardo.ecommerce.services;
 
 
+import com.leothenardo.ecommerce.dtos.PaymentPixDetailsResponseDTO;
 import com.leothenardo.ecommerce.dtos.UserDTO;
 import com.leothenardo.ecommerce.dtos.OrderDTO;
 import com.leothenardo.ecommerce.dtos.PaymentUrlRequestDTO;
@@ -10,6 +11,7 @@ import com.leothenardo.ecommerce.dtos.mail.ConfirmationOrderMailInput;
 import com.leothenardo.ecommerce.dtos.webhooks.AsaasPayWebhook;
 import com.leothenardo.ecommerce.gateways.EmailProvider;
 import com.leothenardo.ecommerce.gateways.PaymentGatewayProvider;
+import com.leothenardo.ecommerce.gateways.models.asaas.GetPaymentPixQRCodeResponse;
 import com.leothenardo.ecommerce.models.*;
 import com.leothenardo.ecommerce.repositories.OrderRepository;
 import org.springframework.stereotype.Service;
@@ -222,4 +224,16 @@ public class PaymentService {
 		return sseService.addSubscriber(orderId);
 	}
 
+	public PaymentPixDetailsResponseDTO generatePixDetails(String orderId) {
+		UserDTO me = userService.getMe();
+		OrderDTO order = orderService.internalGet(Long.parseLong(orderId));
+		log.info("paymentGateway.generatePixDetails");
+		GetPaymentPixQRCodeResponse generated = paymentGateway.generatePixDetails(me, order);
+		log.info("return new PaymentPixDetailsResponseDTO");
+		return new PaymentPixDetailsResponseDTO(
+						generated.getEncodedImage(),
+						generated.getPayload(),
+						generated.getExpirationDate()
+		);
+	}
 }

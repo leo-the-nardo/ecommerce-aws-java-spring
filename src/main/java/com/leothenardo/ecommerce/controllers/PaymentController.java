@@ -1,5 +1,6 @@
 package com.leothenardo.ecommerce.controllers;
 
+import com.leothenardo.ecommerce.dtos.PaymentPixDetailsResponseDTO;
 import com.leothenardo.ecommerce.dtos.PaymentUrlRequestDTO;
 import com.leothenardo.ecommerce.dtos.PaymentUrlResponseDTO;
 import com.leothenardo.ecommerce.dtos.sensitive.ProcessCheckoutSecureDTO;
@@ -66,6 +67,13 @@ public class PaymentController {
 	@GetMapping(value = "/asaas/pix/{orderId}/sse")
 	SseEmitter sse(@PathVariable("orderId") String orderId) {
 		return paymentService.ssePix(orderId);
+	}
+
+	@PreAuthorize("hasAnyRole('ROLE_CLIENT','ROLE_ADMIN')")
+	@GetMapping(value = "/asaas/{orderId}/pix")
+	public ResponseEntity<PaymentPixDetailsResponseDTO> qrcode(@PathVariable("orderId") String orderId) {
+		PaymentPixDetailsResponseDTO qrcode = paymentService.generatePixDetails(orderId);
+		return ResponseEntity.ok().body(qrcode);
 	}
 
 }
