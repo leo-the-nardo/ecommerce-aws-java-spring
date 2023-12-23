@@ -164,14 +164,18 @@ public class PaymentService {
 	protected void handlePaymentConfirmed(AsaasPayWebhook webhook) {
 		String eventName = webhook.event().toString();
 		AsaasPayWebhook.Payment theEvent = webhook.payment();
+		Long orderId = theEvent.externalReference();
+
 		if (webhook.event() == AsaasPayWebhook.EventType.PAYMENT_RECEIVED
 						&& BillingType.valueOf(theEvent.billingType()) == BillingType.CREDIT_CARD) {
 			log.info("Ignoring PAYMENT_RECEIVED event for CREDIT_CARD due to handled by PAYMENT_CONFIRMED event");
 			return;
 		}
+		if (BillingType.valueOf(theEvent.billingType()) == BillingType.PIX) {
+			sseService.sendToSubscriber(orderId.toString(), "OK");
+		}
 
 		log.info("Handling " + eventName + " asaas webhook event");
-		Long orderId = theEvent.externalReference();
 		Order order = orderRepository.findById(orderId).orElseThrow();
 		Payment payment = new Payment(
 						order,
