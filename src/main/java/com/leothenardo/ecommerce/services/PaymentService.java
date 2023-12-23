@@ -14,6 +14,7 @@ import com.leothenardo.ecommerce.models.*;
 import com.leothenardo.ecommerce.repositories.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -28,8 +29,10 @@ public class PaymentService {
 	private final EmailProvider emailProvider;
 	private final NotificationService notificationService;
 	private final ProductService productService;
+	private final SSEService sseService;
+	private final AuthService authService;
 
-	public PaymentService(UserService userService, OrderService orderService, PaymentGatewayProvider paymentGateway, OrderRepository orderRepository, EmailProvider emailProvider, NotificationService notificationService, ProductService productService) {
+	public PaymentService(UserService userService, OrderService orderService, PaymentGatewayProvider paymentGateway, OrderRepository orderRepository, EmailProvider emailProvider, NotificationService notificationService, ProductService productService, SSEService sseService, AuthService authService) {
 		this.userService = userService;
 		this.orderService = orderService;
 		this.paymentGateway = paymentGateway;
@@ -37,6 +40,8 @@ public class PaymentService {
 		this.emailProvider = emailProvider;
 		this.notificationService = notificationService;
 		this.productService = productService;
+		this.sseService = sseService;
+		this.authService = authService;
 	}
 
 
@@ -208,6 +213,13 @@ public class PaymentService {
 		log.info("Processing checkout for order: " + order.id());
 		boolean success = bodyDTO.processWith(paymentGateway, me, order);
 		return success;
-
 	}
+
+	@Transactional(readOnly = true)
+	public SseEmitter ssePix(String orderId) {
+		OrderDTO order = orderService.findById(Long.parseLong(orderId));
+		authService.validateSelfOrAdmin(order.client().id());
+		return sseService.addSubscriber(orderId);
+	}
+
 }
